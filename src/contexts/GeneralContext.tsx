@@ -27,7 +27,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('refreshToken', data.refreshToken);
 
       const decodedUser = decodeToken(data.accessToken);
-      console.log(decodedUser);
       setCurrentUser(decodedUser);
       
       axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
@@ -56,7 +55,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   useEffect(() => {
-    console.log('useefect del context')
     const token = localStorage.getItem('authToken');
     
     if (token) {

@@ -41,9 +41,6 @@ export default function Home() {
     );
   };
 
-  useEffect(() => {
-    console.log();
-  }, []);
   return (
     <PageContainer>
       {!subjects ? (
@@ -103,8 +100,8 @@ export default function Home() {
                 {renderCell(formatTermType(termType), subject, 'text-center')}
                 {renderCell(weeklyHours, subject, 'text-center')}
                 {renderCell(annualHours, subject, 'text-center')}
-                {renderCell(user.regularizedSubjects.includes(subject.code) ? '✓' : '', subject, 'text-center')}
-                {renderCell(user.approvedSubjects.includes(subject.code) ? '✓' : '', subject, 'text-center')}
+                {renderCell( user?.regularizedSubjects.includes(subject.code) ? '✓' : '', subject, 'text-center')}
+                {renderCell( user?.approvedSubjects.includes(subject.code) ? '✓' : '', subject, 'text-center')}
                 {renderCell(requiredSubjectsToEnroll.length > 0 ? requiredSubjectsToEnroll.join(' - ') : '-', subject, 'text-center')}
                 {renderCell(requiredSubjectsToPass.length > 0 ? requiredSubjectsToPass.join(' - ') : '-', subject, 'text-center')}
               </tr>
