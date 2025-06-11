@@ -1,0 +1,11 @@
+.bg-red {
+  background-color: #dc3545 !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.bg-success-half {
+  background-color: rgba(25, 135, 84, 0.5) !important;
+}
