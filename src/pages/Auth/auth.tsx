@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import LoginForm from "../../components/LoginForm/LoginForm";
 import {useAuth} from "../../contexts/GeneralContext";
 import {useNavigate} from "react-router-dom";
+import PageContainer from "../../components/PageContainer/PageContainer";
 
 export default function AuthPage() {
   const { currentUser } = useAuth();
@@ -15,7 +16,7 @@ export default function AuthPage() {
     setLoading(false);
   })
   return (
-    <>
+    <PageContainer>
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -24,6 +25,6 @@ export default function AuthPage() {
           <LoginForm />
         </div>
       )}
-    </>
+    </PageContainer>
   );
 }

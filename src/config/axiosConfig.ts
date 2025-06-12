@@ -18,9 +18,8 @@ export const decodeToken = (token: string) => {
   // console.log('[Auth] Attempting to decode token');
   try {
     const payload = token.split('.')[1];
-    const decoded = JSON.parse(atob(payload));
     // console.log('[Auth] Token decoded successfully');
-    return decoded;
+    return JSON.parse(atob(payload));
   } catch (error) {
     console.error('[Auth] Token decode failed:', error);
     return null;
@@ -34,9 +33,8 @@ export const isTokenExpired = (token: string): boolean => {
     console.warn('[Auth] Token has no expiration or is invalid');
     return true;
   }
-  const isExpired = decoded.exp * 1000 < Date.now();
   // console.log('[Auth] Token expired:', isExpired, 'Expires:', new Date(decoded.exp * 1000));
-  return isExpired;
+  return decoded.exp * 1000 < Date.now();
 };
 
 let refreshTokenPromise: Promise<any> | null = null;
@@ -81,8 +79,8 @@ axiosInstance.interceptors.request.use(
       try {
         refreshTokenPromise = refreshTokenPromise || refreshAccessToken();
         const newToken = await refreshTokenPromise;
-        console.log('[Auth] Using new token for request');
-        // config.headers.Authorization = `Bearer ${newToken}`;
+        // console.log('[Auth] Using new token for request');
+        config.headers.Authorization = `Bearer ${newToken}`;
       } finally {
         refreshTokenPromise = null;
       }
