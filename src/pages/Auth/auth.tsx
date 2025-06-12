@@ -3,6 +3,7 @@ import LoginForm from "../../components/LoginForm/LoginForm";
 import {useAuth} from "../../contexts/GeneralContext";
 import {useNavigate} from "react-router-dom";
 import PageContainer from "../../components/PageContainer/PageContainer";
+import LoadingAnimation from "../../components/LoadingAnimation";
 
 export default function AuthPage() {
   const { currentUser } = useAuth();
@@ -18,7 +19,7 @@ export default function AuthPage() {
   return (
     <PageContainer>
       {loading ? (
-        <p>Loading...</p>
+        <LoadingAnimation />
       ) : (
         <div className="container mt-4">
           <h1 className="mb-4">Log in</h1>

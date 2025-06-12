@@ -3,6 +3,7 @@ import PageContainer from 'src/components/PageContainer/PageContainer.js';
 import { useAuth } from 'src/contexts/GeneralContext.js';
 import {postUsersSubjects} from "src/services/submitUsersSubjects.js";
 import {getMe} from "src/services/getMe.js";
+import LoadingAnimation from "src/components/LoadingAnimation.js";
 
 const termTypeMap = {
   CUATRIMESTRAL: 'CUATR',
@@ -86,7 +87,7 @@ export default function Home() {
   return (
     <PageContainer>
       {!subjects ? (
-        <p>Loading subjects...</p>
+        <LoadingAnimation />
       ) : (
         <>
           <table className="table table-striped">

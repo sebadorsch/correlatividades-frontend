@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/GeneralContext';
 import {useNavigate} from "react-router-dom";
+import LoadingAnimation from "../LoadingAnimation";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ export default function LoginForm() {
   return (
     <>
       {loading ? (
-        <p>Loading...</p>
+        <LoadingAnimation />
       ) : (
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
