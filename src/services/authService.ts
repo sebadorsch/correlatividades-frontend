@@ -1,11 +1,6 @@
 import axiosInstance from 'src/config/axiosConfig';
-interface TokenResponse {
-  accessToken: string;
-  refreshToken: string;
-}
 
-
-export const logIn = async (email: string, password: string): Promise<TokenResponse> => {
+export const logIn = async (email: string, password: string) => {
   const response = await axiosInstance.post('/auth/sign-in', { email, password });
   return response.data;
 };

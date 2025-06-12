@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { logIn as backendSignIn } from '../services/authService';
 import axiosInstance, { decodeToken, isTokenExpired } from '../config/axiosConfig';
 import {getSubjectsFromApi} from "../services/subjects";
+import {getMe} from "../services/getMe";
 
 interface GeneralContextType {
   currentUser: any | null;
+  setCurrentUser: any,
   logIn: (email: string, password: string) => Promise<boolean>;
   logOut: () => void;
   getSubjects: () => Promise<any>;
@@ -56,21 +58,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    
-    if (token) {
-      if (!isTokenExpired(token)) {
-        const decodedUser = decodeToken(token);
-        setCurrentUser(decodedUser);
-        axiosInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
-      }
-    }
 
-    getSubjects().then();
-    setLoading(false);
+    const initialize = async () => {
+      if (token && !isTokenExpired(token)) {
+        axiosInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
+        try {
+          const userFromBackend = await getMe(); // 👈 usar getMe() en vez de decodeToken
+          setCurrentUser(userFromBackend);
+        } catch (error) {
+          console.error('[GeneralContext] Error fetching user from backend:', error);
+          logOut(); // Si falla getMe, forzar logout
+        }
+      }
+
+      await getSubjects();
+      setLoading(false);
+    };
+
+    initialize().then();
   }, []);
 
   return (
-    <GeneralContext.Provider value={{ currentUser, logIn, logOut, getSubjects, subjects }}>
+    <GeneralContext.Provider value={{ currentUser, setCurrentUser, logIn, logOut, getSubjects, subjects }}>
       {!loading && children}
     </GeneralContext.Provider>
   );
