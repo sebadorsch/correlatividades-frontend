@@ -3,6 +3,7 @@ import PageContainer from 'src/components/PageContainer/PageContainer.js';
 import { useAuth } from 'src/contexts/GeneralContext.js';
 import {postUsersSubjects} from "src/services/submitUsersSubjects.js";
 import LoadingAnimation from "src/components/LoadingAnimation.js";
+import {getSubjectsUserCanEnroll} from "src/services/getSubjectsUserCanEnroll.js";
 
 const termTypeMap = {
   CUATRIMESTRAL: 'CUATR',
@@ -84,6 +85,7 @@ export default function Home() {
         regularizedSubjects: regularizedSubjectsChecked,
         approvedSubjects: approvedSubjectsChecked
       });
+      window.location.reload();
       const {regularizedSubjects, approvedSubjects} = data;
       setRegularizedSubjectsChecked(regularizedSubjects);
       setApprovedSubjectsChecked(approvedSubjects)
@@ -98,6 +100,13 @@ export default function Home() {
       setApprovedSubjectsChecked(user.approvedSubjects || []);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user && subjects) {
+      const availableSubjects = getSubjectsUserCanEnroll(subjects, user);
+      console.log('Materias que el usuario puede cursar:', availableSubjects);
+    }
+  }, [user, subjects]);
 
   return (
     <PageContainer>
@@ -114,10 +123,10 @@ export default function Home() {
               <th>Cursado</th>
               <th>C.H. semanal</th>
               <th>C.H. anual</th>
-              <th>Regular</th>
-              <th>Aprobada</th>
               <th>Necesita Regular</th>
               <th>Necesita Aprobada</th>
+              {user && <th>Regular</th>}
+              {user && <th>Aprobada</th>}
             </tr>
             </thead>
             <tbody className="table-group-divider">
@@ -159,7 +168,9 @@ export default function Home() {
                   {renderCell(formatTermType(termType), subject, 'text-center')}
                   {renderCell(weeklyHours, subject, 'text-center')}
                   {renderCell(annualHours, subject, 'text-center')}
-                  {renderCell(
+                  {renderCell(requiredSubjectsToEnroll.length > 0 ? requiredSubjectsToEnroll.join(' - ') : '-', subject, 'text-center')}
+                  {renderCell(requiredSubjectsToPass.length > 0 ? requiredSubjectsToPass.join(' - ') : '-', subject, 'text-center')}
+                  {user && renderCell(
                     <div className="form-check d-flex justify-content-center">
                       <input
                         className="form-check-input"
@@ -171,7 +182,7 @@ export default function Home() {
                     subject,
                     'text-center'
                   )}
-                  {renderCell(
+                  {user && renderCell(
                     <div className="form-check d-flex justify-content-center">
                       <input
                         className="form-check-input"
@@ -183,8 +194,6 @@ export default function Home() {
                     subject,
                     'text-center'
                   )}
-                  {renderCell(requiredSubjectsToEnroll.length > 0 ? requiredSubjectsToEnroll.join(' - ') : '-', subject, 'text-center')}
-                  {renderCell(requiredSubjectsToPass.length > 0 ? requiredSubjectsToPass.join(' - ') : '-', subject, 'text-center')}
                 </tr>
               );
             })}
@@ -194,9 +203,51 @@ export default function Home() {
             user &&
             <div className="mt-5 text-end">
               <button className="btn btn-primary" onClick={handleSubmit}>
-                Actualizar valores
+                Guardar valores
               </button>
             </div>
+          }
+          {
+            user &&
+            <>
+              <h2 className="mt-5">Materias que podés cursar</h2>
+              <table className="table table-striped">
+                <thead>
+                <tr>
+                  <th>Año</th>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Cursado</th>
+                  <th>C.H. semanal</th>
+                  <th>C.H. anual</th>
+                  <th>Necesita Regular</th>
+                  <th>Necesita Aprobada</th>
+                </tr>
+                </thead>
+                <tbody className="table-group-divider">
+                {getSubjectsUserCanEnroll(subjects, user).map((subject) => (
+                  <tr key={subject.id}>
+                    <td>{subject.courseYear}</td>
+                    <td>{subject.code}</td>
+                    <td>{subject.name}</td>
+                    <td className="text-center">{formatTermType(subject.termType)}</td>
+                    <td className="text-center">{subject.weeklyHours}</td>
+                    <td className="text-center">{subject.annualHours}</td>
+                    <td className="text-center">
+                      {subject.requiredSubjectsToEnroll.length > 0
+                        ? subject.requiredSubjectsToEnroll.join(' - ')
+                        : '-'}
+                    </td>
+                    <td className="text-center">
+                      {subject.requiredSubjectsToPass.length > 0
+                        ? subject.requiredSubjectsToPass.join(' - ')
+                        : '-'}
+                    </td>
+                  </tr>
+                ))}
+                </tbody>
+              </table>
+            </>
           }
         </>
       )}

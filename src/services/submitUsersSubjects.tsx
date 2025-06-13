@@ -8,7 +8,7 @@ export const postUsersSubjects = async ({regularizedSubjects, approvedSubjects})
     approvedSubjects
   };
 
-  const response = await axiosInstance.post(`/users/add-subjects`, body, {
+  const response = await axiosInstance.patch(`/users/subjects`, body, {
     headers: {
       Authorization: `Bearer ${token}`
     }
