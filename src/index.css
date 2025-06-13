@@ -6,6 +6,13 @@ body{
   background-color: #dc3545 !important;
 }
 
+.bg-green {
+  background-color: #198754 !important;
+}
+
+.bg-yellow {
+  background-color: #ffc107 !important;
+}
 .cursor-pointer {
   cursor: pointer;
 }

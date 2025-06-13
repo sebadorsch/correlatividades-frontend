@@ -123,10 +123,10 @@ export default function Home() {
               <th className='text-center'>Cursado</th>
               <th className='text-center'>C.H. semanal</th>
               <th className='text-center'>C.H. anual</th>
-              <th className='text-center'>Necesita Regular</th>
-              <th className='text-center'>Necesita Aprobada</th>
-              {user && <th className='text-center'>Regular</th>}
-              {user && <th className='text-center'>Aprobada</th>}
+              <th className='text-center bg-yellow'>Necesita Regular</th>
+              <th className='text-center text-white bg-green'>Necesita Aprobada</th>
+              {user && <th className='text-center'>Tengo Regular</th>}
+              {user && <th className='text-center'>Tengo Aprobada</th>}
             </tr>
             </thead>
             <tbody className="table-group-divider">
