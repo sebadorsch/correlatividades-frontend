@@ -65,7 +65,7 @@ export default function Home() {
     const isRequiredToPass = requiredToPassCodes.includes(subject.code);
 
     const bgClass = isSelected
-      ? 'bg-danger text-white'
+      ? 'bg-primary text-white'
       : isRequiredToEnroll
         ? 'bg-warning'
         : isRequiredToPass
@@ -153,7 +153,7 @@ export default function Home() {
                   <th
                     className={
                       selectedRow === id
-                        ? 'bg-danger text-white text-center'
+                        ? 'bg-primary text-white text-center'
                         : requiredToEnrollCodes.includes(code)
                           ? 'bg-warning text-center'
                           : requiredToPassCodes.includes(code)
@@ -173,7 +173,7 @@ export default function Home() {
                   {user && renderCell(
                     <div className="form-check d-flex justify-content-center">
                       <input
-                        className="form-check-input"
+                        className="form-check-input checkbox-warning"
                         type="checkbox"
                         checked={regularizedSubjectsChecked.includes(subject.code)}
                         onChange={() => handleCheckboxChange(subject.code, 'regularized')}
@@ -185,7 +185,7 @@ export default function Home() {
                   {user && renderCell(
                     <div className="form-check d-flex justify-content-center">
                       <input
-                        className="form-check-input"
+                        className="form-check-input checkbox-success"
                         type="checkbox"
                         checked={approvedSubjectsChecked.includes(subject.code)}
                         onChange={() => handleCheckboxChange(subject.code, 'approved')}
@@ -214,21 +214,21 @@ export default function Home() {
               <table className="table table-striped">
                 <thead>
                 <tr>
-                  <th>Año</th>
-                  <th>Código</th>
+                  <th className='text-center'>Año</th>
+                  <th className='text-center'>Código</th>
                   <th>Nombre</th>
-                  <th>Cursado</th>
-                  <th>C.H. semanal</th>
-                  <th>C.H. anual</th>
-                  <th>Necesita Regular</th>
-                  <th>Necesita Aprobada</th>
+                  <th className='text-center'>Cursado</th>
+                  <th className='text-center'>C.H. semanal</th>
+                  <th className='text-center'>C.H. anual</th>
+                  <th className='text-center'>Necesita Regular</th>
+                  <th className='text-center'>Necesita Aprobada</th>
                 </tr>
                 </thead>
                 <tbody className="table-group-divider">
                 {getSubjectsUserCanEnroll(subjects, user).map((subject) => (
                   <tr key={subject.id}>
-                    <td>{subject.courseYear}</td>
-                    <td>{subject.code}</td>
+                    <td className='text-center'>{subject.courseYear}</td>
+                    <td className='text-center'>{subject.code}</td>
                     <td>{subject.name}</td>
                     <td className="text-center">{formatTermType(subject.termType)}</td>
                     <td className="text-center">{subject.weeklyHours}</td>
