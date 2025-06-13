@@ -13,3 +13,13 @@ body{
 .bg-success-half {
   background-color: rgba(25, 135, 84, 0.5) !important;
 }
+
+tr.hover-fade-scale {
+  transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+tr.hover-fade-scale:hover {
+  background-color: #f6f6f6;
+  transform: scale(1.005);
+  opacity: 0.95;
+}

@@ -117,16 +117,16 @@ export default function Home() {
           <table ref={tableRef} className="table table-striped">
             <thead>
             <tr>
-              <th>Año</th>
-              <th>Código</th>
+              <th className='text-center'>Año</th>
+              <th className='text-center'>Código</th>
               <th>Nombre</th>
-              <th>Cursado</th>
-              <th>C.H. semanal</th>
-              <th>C.H. anual</th>
-              <th>Necesita Regular</th>
-              <th>Necesita Aprobada</th>
-              {user && <th>Regular</th>}
-              {user && <th>Aprobada</th>}
+              <th className='text-center'>Cursado</th>
+              <th className='text-center'>C.H. semanal</th>
+              <th className='text-center'>C.H. anual</th>
+              <th className='text-center'>Necesita Regular</th>
+              <th className='text-center'>Necesita Aprobada</th>
+              {user && <th className='text-center'>Regular</th>}
+              {user && <th className='text-center'>Aprobada</th>}
             </tr>
             </thead>
             <tbody className="table-group-divider">
@@ -147,7 +147,7 @@ export default function Home() {
                 <tr
                   key={id}
                   onClick={() => handleRowClick(subject)}
-                  className='cursor-pointer'
+                  className='cursor-pointer hover-fade-scale'
                 >
                   {renderCell(courseYear, subject)}
                   <th
