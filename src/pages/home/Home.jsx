@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import PageContainer from 'src/components/PageContainer/PageContainer.js';
 import { useAuth } from 'src/contexts/GeneralContext.js';
 import {postUsersSubjects} from "src/services/submitUsersSubjects.js";
-import {getMe} from "src/services/getMe.js";
 import LoadingAnimation from "src/components/LoadingAnimation.js";
 
 const termTypeMap = {
@@ -20,6 +19,22 @@ export default function Home() {
 
   const [regularizedSubjectsChecked, setRegularizedSubjectsChecked] = useState([]);
   const [approvedSubjectsChecked, setApprovedSubjectsChecked] = useState([]);
+
+  const tableRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tableRef.current && !tableRef.current.contains(event.target)) {
+        setSelectedRow(null);
+        setRequiredToEnrollCodes([]);
+        setRequiredToPassCodes([]);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleCheckboxChange = (subjectCode, type) => {
     if (type === 'regularized') {
@@ -90,7 +105,7 @@ export default function Home() {
         <LoadingAnimation />
       ) : (
         <>
-          <table className="table table-striped">
+          <table ref={tableRef} className="table table-striped">
             <thead>
             <tr>
               <th>Año</th>

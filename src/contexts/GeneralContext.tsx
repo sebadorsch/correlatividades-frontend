@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { logIn as backendSignIn } from '../services/authService';
+import {logIn as backendSignIn} from '../services/authService';
+import { signUp as backendSignUp } from '../services/authService';
 import axiosInstance, { decodeToken, isTokenExpired } from '../config/axiosConfig';
 import {getSubjectsFromApi} from "../services/subjects";
 import {getMe} from "../services/getMe";
@@ -8,6 +9,7 @@ interface GeneralContextType {
   currentUser: any | null;
   setCurrentUser: any,
   logIn: (email: string, password: string) => Promise<boolean>;
+  signUp: (body :{email: string, password: string, firstName?: string, lastName?: string}) => Promise<boolean>;
   logOut: () => void;
   getSubjects: () => Promise<any>;
   subjects: any;
@@ -31,6 +33,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const decodedUser = decodeToken(data.accessToken);
       setCurrentUser(decodedUser);
       
+      axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
+      return true;
+    } catch (error) {
+      console.error('[GeneralContext] Sign in failed:', error);
+      return false;
+    }
+  };
+
+  const signUp = async (body :{email: string, password: string}) => {
+    try {
+      const data = await backendSignUp(body);
+
+      localStorage.setItem('authToken', data.accessToken);
+      localStorage.setItem('refreshToken', data.refreshToken);
+
+      const decodedUser = decodeToken(data.accessToken);
+      setCurrentUser(decodedUser);
+
       axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
       return true;
     } catch (error) {
@@ -79,7 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   return (
-    <GeneralContext.Provider value={{ currentUser, setCurrentUser, logIn, logOut, getSubjects, subjects }}>
+    <GeneralContext.Provider value={{ currentUser, setCurrentUser, logIn, signUp, logOut, getSubjects, subjects }}>
       {!loading && children}
     </GeneralContext.Provider>
   );

@@ -5,6 +5,11 @@ export const logIn = async (email: string, password: string) => {
   return response.data;
 };
 
+export const signUp = async (body :{email: string, password: string}) => {
+  const response = await axiosInstance.post('/auth/sign-up', body);
+  return response.data;
+};
+
 // export const refreshToken = async (refreshToken: string): Promise<TokenResponse> => {
 //   const response = await axiosInstance.post('/auth/refresh-token', { refreshToken });
 //   return response.data;
