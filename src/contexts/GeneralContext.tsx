@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logIn = async (email: string, password: string) => {
     try {
-      const data = await backendSignIn('email', password);
+      const data = await backendSignIn(email, password);
 
       localStorage.setItem('authToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
