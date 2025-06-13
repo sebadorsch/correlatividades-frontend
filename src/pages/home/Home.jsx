@@ -202,7 +202,7 @@ export default function Home() {
           {
             user &&
             <div className="mt-5 text-end">
-              <button className="btn btn-primary" onClick={handleSubmit}>
+              <button className="btn btn-success" onClick={handleSubmit}>
                 Guardar valores
               </button>
             </div>
