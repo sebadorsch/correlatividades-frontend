@@ -22,12 +22,12 @@ body{
 }
 
 tr.hover-fade-scale {
-  transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.1s ease, background-color 0.1s ease, opacity 0.1s ease;
 }
 
 tr.hover-fade-scale:hover {
   background-color: #f6f6f6;
-  transform: scale(1.005);
+  transform: scale(1.001);
   opacity: 0.95;
 }
 

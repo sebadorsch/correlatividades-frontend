@@ -101,16 +101,15 @@ export default function Home() {
     }
   }, [user]);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (user && subjects) {
-      const availableSubjects = getSubjectsUserCanEnroll(subjects, user);
-      console.log('Materias que el usuario puede cursar:', availableSubjects);
-    }
-  }, [user, subjects]);
+    if (subjects) setLoading(false);
+  }, [subjects]);
 
   return (
     <PageContainer>
-      {!subjects ? (
+      {!subjects || loading ? (
         <LoadingAnimation />
       ) : (
         <>
@@ -149,7 +148,7 @@ export default function Home() {
                   onClick={() => handleRowClick(subject)}
                   className='cursor-pointer hover-fade-scale'
                 >
-                  {renderCell(courseYear, subject)}
+                  {renderCell(courseYear, subject, 'text-center')}
                   <th
                     className={
                       selectedRow === id
