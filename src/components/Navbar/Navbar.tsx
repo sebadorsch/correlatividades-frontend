@@ -17,7 +17,7 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-dark bg-dark">
       <div className="container-fluid">
-        <a className="navbar-brand">Correlatividades Ingeniería en Sistemas - Plan 2023</a>
+        <a className="navbar-brand" href='/'>Correlatividades Ingeniería en Sistemas - Plan 2023</a>
         <button className="btn btn-warning" type="button" onClick={handleLoginClick}>
           {
             currentUser ? 'Log out' : 'Login'

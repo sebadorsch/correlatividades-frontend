@@ -12,6 +12,8 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [isPasswordValid, setIsPasswordValid] = useState(true);
 
+  const [errorMessage, setErrorMessage] = useState('');
+
   const [loading, setLoading] = useState(false);
 
   const { logIn } = useAuth();
@@ -32,9 +34,12 @@ export default function LoginForm() {
 
     try {
       setLoading(true);
-      const successfulLogIn = await logIn(email, password);
-
-      if (successfulLogIn) navigate('/');
+      const { success, message } = await logIn(email, password);
+      if (success) {
+        navigate('/');
+      } else {
+        setErrorMessage(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -57,43 +62,46 @@ export default function LoginForm() {
       {loading ? (
         <LoadingAnimation />
       ) : (
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="emailInput" className="form-label">Email</label>
-            <input
-              type="email"
-              className={`form-control ${isEmailValid ? '' : 'is-invalid'}`}
-              id="emailInput"
-              value={email}
-              onChange={handleEmailChange}
-            />
-            {!isEmailValid && (
-              <div className="invalid-feedback">
-                Ingresá un email válido.
-              </div>
-            )}
-          </div>
+        <>
+          {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="emailInput" className="form-label">Email</label>
+              <input
+                type="email"
+                className={`form-control ${isEmailValid ? '' : 'is-invalid'}`}
+                id="emailInput"
+                value={email}
+                onChange={handleEmailChange}
+              />
+              {!isEmailValid && (
+                <div className="invalid-feedback">
+                  Ingresá un email válido.
+                </div>
+              )}
+            </div>
 
-          <div className="mb-3">
-            <label htmlFor="passwordInput" className="form-label">Password</label>
-            <input
-              type="password"
-              className={`form-control ${isPasswordValid ? '' : 'is-invalid'}`}
-              id="passwordInput"
-              value={password}
-              onChange={handlePasswordChange}
-            />
-            {!isPasswordValid && (
-              <div className="invalid-feedback">
-                La contraseña debe tener al menos 6 caracteres.
-              </div>
-            )}
-          </div>
+            <div className="mb-3">
+              <label htmlFor="passwordInput" className="form-label">Password</label>
+              <input
+                type="password"
+                className={`form-control ${isPasswordValid ? '' : 'is-invalid'}`}
+                id="passwordInput"
+                value={password}
+                onChange={handlePasswordChange}
+              />
+              {!isPasswordValid && (
+                <div className="invalid-feedback">
+                  La contraseña debe tener al menos 6 caracteres.
+                </div>
+              )}
+            </div>
 
-          <div className="text-end">
-            <button type="submit" className={`btn btn-success ${(!isEmailValid || !isPasswordValid) ? 'disabled' : ''}`}>Submit</button>
-          </div>
-        </form>
+            <div className="text-end">
+              <button type="submit" className={`btn btn-success ${(!isEmailValid || !isPasswordValid) ? 'disabled' : ''}`}>Submit</button>
+            </div>
+          </form>
+        </>
       )}
     </>
   );

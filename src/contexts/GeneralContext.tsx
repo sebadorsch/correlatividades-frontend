@@ -8,8 +8,8 @@ import {getMe} from "../services/getMe";
 interface GeneralContextType {
   currentUser: any | null;
   setCurrentUser: any,
-  logIn: (email: string, password: string) => Promise<boolean>;
-  signUp: (body :{email: string, password: string, firstName?: string, lastName?: string}) => Promise<boolean>;
+  logIn: (email: string, password: string) => Promise<{success: boolean, message: string}>;
+  signUp: (body :{email: string, password: string}) => Promise<{success: boolean, message: string}>;
   logOut: () => void;
   getSubjects: () => Promise<any>;
   subjects: any;
@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logIn = async (email: string, password: string) => {
     try {
-      const data = await backendSignIn(email, password);
+      const data = await backendSignIn('email', password);
 
       localStorage.setItem('authToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
@@ -34,10 +34,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setCurrentUser(decodedUser);
       
       axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
-      return true;
-    } catch (error) {
+      return { success: true, message: '' };
+    } catch (error: any) {
       console.error('[GeneralContext] Sign in failed:', error);
-      return false;
+      return { success: false, message: 'Error al iniciar sesión' };
     }
   };
 
@@ -52,10 +52,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setCurrentUser(decodedUser);
 
       axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
-      return true;
-    } catch (error) {
+      return { success: true, message: '' };
+    } catch (error: any) {
       console.error('[GeneralContext] Sign in failed:', error);
-      return false;
+      return { success: false, message: 'Error al registrarse' };
     }
   };
 
