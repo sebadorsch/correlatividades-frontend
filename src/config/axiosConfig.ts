@@ -1,14 +1,17 @@
 import axios from 'axios';
 
+// Por defecto la API está en el mismo dominio, bajo /api (proxy de vercel.json o de Vite).
+const API_URL = import.meta.env.VITE_API_URL || '/api';
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 const refreshAxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -59,7 +62,7 @@ const refreshAccessToken = async () => {
   } catch (error) {
     console.error('[Auth] Token refresh failed:', error);
     localStorage.clear();
-    window.location.href = '/login';
+    window.location.href = '/auth';
     throw error;
   }
 };

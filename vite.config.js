@@ -9,4 +9,10 @@ export default defineConfig({
       src: path.resolve(__dirname, './src'),
     },
   },
+  // En desarrollo, /api va al back local (en producción lo hace vercel.json).
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3000',
+    },
+  },
 });
