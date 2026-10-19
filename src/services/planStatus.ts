@@ -13,6 +13,7 @@ export type Subject = {
   courseYear?: number | null;
   requiredSubjectsToEnroll: number[];
   requiredSubjectsToPass: number[];
+  intermediateTitleOnly?: boolean;
 };
 
 export type SubjectStatus = {
@@ -77,3 +78,51 @@ export const STATE_LABEL: Record<SubjectState, string> = {
 
 export const joinNames = (names: string[]) =>
   names.length <= 1 ? names.join('') : `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;
+
+// Horas semanales de electivas que exige el plan en cada nivel (Ord. 1877).
+export const ELECTIVE_LEVELS = [3, 4, 5] as const;
+export type ElectiveHours = Record<3 | 4 | 5, number>;
+export const ELECTIVE_REQUIRED: ElectiveHours = { 3: 4, 4: 6, 5: 10 };
+
+export const electivesFromUser = (user: any): ElectiveHours => ({
+  3: user?.electiveHoursLevel3 ?? 0,
+  4: user?.electiveHoursLevel4 ?? 0,
+  5: user?.electiveHoursLevel5 ?? 0,
+});
+
+// Materias de la carrera de grado (sin las que solo pide el título de Analista).
+export const degreeSubjects = (subjects: Subject[]) => subjects.filter((s) => !s.intermediateTitleOnly);
+
+type TitleProgress = {
+  approved: number;
+  total: number;
+  electivesDone: number;
+  electivesRequired: number;
+  complete: boolean;
+};
+
+const titleProgress = (
+  subjects: Subject[],
+  statusByCode: Map<number, SubjectStatus>,
+  electives: ElectiveHours,
+  levels: (3 | 4 | 5)[],
+): TitleProgress => {
+  const approved = subjects.filter((s) => statusByCode.get(s.code)?.state === 'aprobada').length;
+  const electivesDone = levels.reduce((sum, level) => sum + Math.min(electives[level], ELECTIVE_REQUIRED[level]), 0);
+  const electivesRequired = levels.reduce((sum, level) => sum + ELECTIVE_REQUIRED[level], 0);
+  return {
+    approved,
+    total: subjects.length,
+    electivesDone,
+    electivesRequired,
+    complete: approved === subjects.length && electivesDone === electivesRequired,
+  };
+};
+
+// Analista: materias de 1º a 3º nivel + Seminario Integrador + electivas de 3º nivel (Ord. 1910).
+export const analistaProgress = (subjects: Subject[], statusByCode: Map<number, SubjectStatus>, electives: ElectiveHours) =>
+  titleProgress(subjects.filter((s) => (s.courseYear ?? 0) <= 3), statusByCode, electives, [3]);
+
+// Ingeniería: las 36 materias + electivas de 3º, 4º y 5º nivel (la PPS no se registra en la app).
+export const ingenieriaProgress = (subjects: Subject[], statusByCode: Map<number, SubjectStatus>, electives: ElectiveHours) =>
+  titleProgress(degreeSubjects(subjects), statusByCode, electives, [3, 4, 5]);

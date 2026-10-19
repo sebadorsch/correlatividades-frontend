@@ -26,6 +26,12 @@ export default function SubjectPanel({ subject, status, byCode, value, onChange 
       <p className="muted">
         {subject.courseYear}º nivel · {formatTermType(subject.termType)} · {subject.weeklyHours ?? '—'} h por semana
       </p>
+      {subject.intermediateTitleOnly && (
+        <p className="panel-note-box">
+          Solo la pide el título intermedio de Analista. Es la última materia de ese título: para rendirla
+          tenés que tener aprobadas todas las demás materias de 1º a 3º nivel.
+        </p>
+      )}
 
       {regular.length + approved.length === 0 ? (
         <p className="muted">No tiene correlativas: la podés cursar desde el principio.</p>

@@ -7,7 +7,10 @@ import PlanSection from 'src/components/PlanSection/PlanSection.jsx';
 import SaveBar from 'src/components/SaveBar/SaveBar.jsx';
 import useSubjectDraft from 'src/hooks/useSubjectDraft.js';
 import { useAuth } from 'src/contexts/GeneralContext.js';
-import { formatTermType } from 'src/services/planStatus.ts';
+import ElectivesPanel from 'src/components/ElectivesPanel/ElectivesPanel.jsx';
+import {
+  analistaProgress, degreeSubjects, formatTermType, ingenieriaProgress,
+} from 'src/services/planStatus.ts';
 
 const LEVELS = [1, 2, 3, 4, 5];
 
@@ -70,7 +73,9 @@ function Welcome({ sorted, byCode }) {
           <p className="muted section-sub">Tocá una materia para ver sus correlativas.</p>
           <PlanMap sorted={sorted} selectedCode={selectedCode} onSelect={setSelectedCode} />
         </div>
-        <SubjectPanel subject={byCode.get(selectedCode)} byCode={byCode} />
+        {typeof selectedCode === 'string'
+          ? <ElectivesPanel level={Number(selectedCode.slice(1))} />
+          : <SubjectPanel subject={byCode.get(selectedCode)} byCode={byCode} />}
       </section>
     </PageContainer>
   );
@@ -78,7 +83,8 @@ function Welcome({ sorted, byCode }) {
 
 export default function Home() {
   const {
-    user, sorted, byCode, draft, statusByCode, changes, saveState, setSubjectState, save, discard,
+    user, sorted, byCode, draft, electives, statusByCode, changes, saveState,
+    setSubjectState, setElectiveHours, save, discard,
   } = useSubjectDraft();
   const [selectedCode, setSelectedCode] = useState(null);
   const [focus, setFocus] = useState(null);
@@ -89,7 +95,23 @@ export default function Home() {
   const byState = (state) => sorted.filter((s) => statusByCode.get(s.code)?.state === state);
   const available = byState('disponible');
   const pendingFinals = byState('regular');
-  const approvedCount = byState('aprobada').length;
+  const degree = degreeSubjects(sorted);
+  const approvedCount = degree.filter((s) => statusByCode.get(s.code)?.state === 'aprobada').length;
+  const titles = [
+    {
+      key: 'analista',
+      name: 'Analista Desarrollador Universitario',
+      electivesLabel: 'Electivas de 3º nivel',
+      progress: analistaProgress(sorted, statusByCode, electives),
+    },
+    {
+      key: 'ingenieria',
+      name: 'Ingeniería en Sistemas de Información',
+      electivesLabel: 'Electivas de 3º a 5º nivel',
+      progress: ingenieriaProgress(sorted, statusByCode, electives),
+      note: 'Además pide 200 h de Práctica Profesional Supervisada.',
+    },
+  ];
   const hours = available.reduce((sum, s) => sum + (s.weeklyHours || 0), 0);
 
   // Llevar una materia del resumen al plan de abajo.
@@ -109,7 +131,7 @@ export default function Home() {
       <section className="hello">
         <h1>Tu carrera</h1>
         <p className="lede">
-          Llevás {approvedCount} de {sorted.length} materias aprobadas.
+          Llevás {approvedCount} de {degree.length} materias aprobadas.
         </p>
       </section>
 
@@ -164,7 +186,7 @@ export default function Home() {
             <h2 id="avance" className="card-title">Tu avance por nivel</h2>
             <div className="level-bars">
               {LEVELS.map((level) => {
-                const all = sorted.filter((s) => s.courseYear === level);
+                const all = degree.filter((s) => s.courseYear === level);
                 const done = all.filter((s) => statusByCode.get(s.code)?.state === 'aprobada').length;
                 return (
                   <div className="level-bar" key={level}>
@@ -177,6 +199,27 @@ export default function Home() {
               })}
             </div>
           </section>
+
+          <section className="card" aria-labelledby="titulos">
+            <h2 id="titulos" className="card-title">Tus títulos</h2>
+            <ul className="titles">
+              {titles.map(({ key, name, electivesLabel, progress, note }) => (
+                <li key={key}>
+                  <div className="title-line">
+                    <strong>{name}</strong>
+                    {progress.complete && <span className="tag tag-disponible">Completo</span>}
+                  </div>
+                  <div className="bar" role="img" aria-label={`${progress.approved} de ${progress.total} materias aprobadas`}>
+                    <i style={{ width: `${(progress.approved / progress.total) * 100}%` }} />
+                  </div>
+                  <span className="muted num">
+                    {progress.approved} de {progress.total} materias · {electivesLabel}: {progress.electivesDone} de {progress.electivesRequired} h
+                  </span>
+                  {note && <small className="muted">{note}</small>}
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
       </div>
 
@@ -186,6 +229,8 @@ export default function Home() {
         draft={draft}
         statusByCode={statusByCode}
         setSubjectState={setSubjectState}
+        electives={electives}
+        setElectiveHours={setElectiveHours}
         selectedCode={selectedCode ?? firstAvailable}
         onSelect={setSelectedCode}
         focus={focus}

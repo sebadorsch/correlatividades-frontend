@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PlanMap from 'src/components/PlanMap/PlanMap.jsx';
 import SubjectPanel from 'src/components/SubjectPanel/SubjectPanel.jsx';
 import Checklist from 'src/components/Checklist/Checklist.jsx';
+import ElectivesPanel from 'src/components/ElectivesPanel/ElectivesPanel.jsx';
 
 const PHONE_QUERY = '(max-width: 760px)';
 
@@ -18,8 +19,9 @@ const useIsPhone = () => {
 
 // Tu plan, editable: mapa por niveles en escritorio y checklist en el celular.
 export default function PlanSection({
-  sorted, byCode, draft, statusByCode, setSubjectState, selectedCode, onSelect, focus,
+  sorted, byCode, draft, statusByCode, setSubjectState, electives, setElectiveHours, selectedCode, onSelect, focus,
 }) {
+  const electiveLevel = typeof selectedCode === 'string' ? Number(selectedCode.slice(1)) : null;
   const isPhone = useIsPhone();
   const [filter, setFilter] = useState('todas');
 
@@ -55,6 +57,8 @@ export default function PlanSection({
           byCode={byCode}
           draft={draft}
           onChange={setSubjectState}
+          electives={electives}
+          onElectivesChange={setElectiveHours}
           initialOpen={[firstOpenLevel]}
           focus={focus}
         />
@@ -64,6 +68,7 @@ export default function PlanSection({
             <PlanMap
               sorted={sorted}
               statusByCode={statusByCode}
+              electives={electives}
               selectedCode={selectedCode}
               onSelect={onSelect}
               filter={filter}
@@ -76,13 +81,17 @@ export default function PlanSection({
               <span><i className="swatch is-required" />Correlativa de la materia elegida</span>
             </div>
           </div>
-          <SubjectPanel
-            subject={byCode.get(selectedCode)}
-            status={statusByCode.get(selectedCode)}
-            byCode={byCode}
-            value={draft[selectedCode] || 'pendiente'}
-            onChange={setSubjectState}
-          />
+          {electiveLevel ? (
+            <ElectivesPanel level={electiveLevel} hours={electives[electiveLevel]} onChange={setElectiveHours} />
+          ) : (
+            <SubjectPanel
+              subject={byCode.get(selectedCode)}
+              status={statusByCode.get(selectedCode)}
+              byCode={byCode}
+              value={draft[selectedCode] || 'pendiente'}
+              onChange={setSubjectState}
+            />
+          )}
         </div>
       )}
     </section>

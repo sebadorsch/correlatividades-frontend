@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { formatTermType, joinNames } from 'src/services/planStatus.ts';
 import StateChoice from 'src/components/StateChoice/StateChoice.jsx';
+import HoursStepper from 'src/components/HoursStepper/HoursStepper.jsx';
+import { ELECTIVE_REQUIRED } from 'src/services/planStatus.ts';
 
 const LEVELS = [1, 2, 3, 4, 5];
 
@@ -19,7 +21,9 @@ const Ring = ({ done, total }) => {
 };
 
 // Carga de materias en el celular: un desplegable por nivel y tres botones grandes por materia.
-export default function Checklist({ sorted, statusByCode, byCode, draft, onChange, initialOpen, focus }) {
+export default function Checklist({
+  sorted, statusByCode, byCode, draft, onChange, electives, onElectivesChange, initialOpen, focus,
+}) {
   const [open, setOpen] = useState(() => new Set(initialOpen));
 
   // Al elegir una materia desde el resumen: abrir su nivel y llevarla a la vista.
@@ -42,7 +46,9 @@ export default function Checklist({ sorted, statusByCode, byCode, draft, onChang
     <div className="checklist">
       {LEVELS.map((level) => {
         const subjects = sorted.filter((s) => s.courseYear === level);
-        const done = subjects.filter((s) => statusByCode.get(s.code)?.state === 'aprobada').length;
+        const degree = subjects.filter((s) => !s.intermediateTitleOnly);
+        const done = degree.filter((s) => statusByCode.get(s.code)?.state === 'aprobada').length;
+        const electiveRequired = ELECTIVE_REQUIRED[level];
         const isOpen = open.has(level);
         return (
           <section className={`level ${isOpen ? 'is-open' : ''}`} key={level}>
@@ -53,8 +59,8 @@ export default function Checklist({ sorted, statusByCode, byCode, draft, onChang
               onClick={() => toggle(level)}
             >
               <h3>{level}º nivel</h3>
-              <span className="muted num">{done} de {subjects.length}</span>
-              <Ring done={done} total={subjects.length} />
+              <span className="muted num">{done} de {degree.length}</span>
+              <Ring done={done} total={degree.length} />
             </button>
             {isOpen && (
               <ul className="level-items">
@@ -67,6 +73,7 @@ export default function Checklist({ sorted, statusByCode, byCode, draft, onChang
                   return (
                     <li className="item" key={s.code} id={`materia-${s.code}`}>
                       <span className="item-name">{s.name}</span>
+                      {s.intermediateTitleOnly && <span className="item-note">Solo título de Analista</span>}
                       {status.state === 'disponible' && <span className="item-hint is-go">Podés cursarla</span>}
                       {status.state === 'bloqueada' && <span className="item-hint">Te falta {joinNames(missing)}</span>}
                       {(status.state === 'aprobada' || status.state === 'regular') && (
@@ -81,6 +88,16 @@ export default function Checklist({ sorted, statusByCode, byCode, draft, onChang
                     </li>
                   );
                 })}
+                {electiveRequired && (
+                  <li className="item">
+                    <span className="item-name">Electivas</span>
+                    <span className="item-hint">
+                      El plan pide {electiveRequired} h semanales. Cargá las horas de las electivas que aprobaste:
+                      {' '}<span className="num">{electives[level]} de {electiveRequired} h</span>.
+                    </span>
+                    <HoursStepper level={level} value={electives[level]} onChange={onElectivesChange} />
+                  </li>
+                )}
               </ul>
             )}
           </section>

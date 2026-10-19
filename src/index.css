@@ -263,6 +263,11 @@ a { color: var(--accent); }
 .link-row:hover { background: var(--soft); }
 .link-row small { font-weight: 400; white-space: nowrap; }
 
+.titles { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.titles li { display: grid; gap: 6px; }
+.titles .muted { font-size: 14px; }
+.title-line { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
 .level-bars { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .level-bar { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
 .bar { height: 10px; border-radius: 999px; background: var(--soft); overflow: hidden; }
@@ -366,6 +371,17 @@ a { color: var(--accent); }
 .st-disponible .map-card-state { color: var(--accent); }
 .st-bloqueada { background: var(--bloq); color: var(--bloq-ink); }
 
+.map-card-note { font-size: 12px; font-weight: 600; color: var(--muted); }
+.st-aprobada .map-card-note { color: var(--aprobada-sub); }
+
+.map-card-electives {
+  background: transparent;
+  border: 2px dashed var(--edge);
+}
+.map-card-electives .map-card-state { color: var(--muted); }
+.map-card-electives.is-complete { border-style: solid; border-color: var(--accent); background: var(--accent-tint); box-shadow: none; }
+.map-card-electives.is-complete .map-card-state { color: var(--accent); }
+
 .map-card.is-dim { opacity: 0.3; }
 .map-card.is-required { outline: 2px dashed var(--ink); outline-offset: 2px; }
 .map-card.is-selected { outline: 3px solid var(--accent); outline-offset: 2px; }
@@ -397,6 +413,52 @@ a { color: var(--accent); }
 
 .subject-panel h2 { font-size: 22px; line-height: 1.25; font-weight: 800; letter-spacing: -0.01em; }
 .subject-panel .muted { font-size: 15px; }
+
+.panel-note-box {
+  background: var(--soft);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.stepper { display: inline-grid; grid-template-columns: 44px 64px 44px; gap: 6px; align-items: center; }
+
+.stepper button {
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--soft);
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stepper button:hover:not(:disabled) { background: var(--edge); }
+.stepper button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.stepper input {
+  height: 44px;
+  width: 100%;
+  text-align: center;
+  border: 1.5px solid var(--edge);
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  -moz-appearance: textfield;
+}
+
+.stepper input::-webkit-outer-spin-button,
+.stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.item-note { font-size: 13px; font-weight: 600; color: var(--muted); }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
 
 .panel-label { font-size: 14px; font-weight: 700; margin-top: 6px; }
 
