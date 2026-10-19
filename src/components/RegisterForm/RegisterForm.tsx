@@ -6,6 +6,8 @@ import PasswordInput from "../PasswordInput/PasswordInput";
 export default function RegisterForm() {
   const navigate = useNavigate();
 
+  const [firstName, setFirstName] = useState('');
+
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(true);
 
@@ -40,7 +42,7 @@ export default function RegisterForm() {
     try {
       setLoading(true);
       setErrorMessage('');
-      const { success, message } = await signUp({ email, password });
+      const { success, message } = await signUp({ email, password, ...(firstName.trim() && { firstName: firstName.trim() }) });
 
       if (success) navigate('/');
       else setErrorMessage(message);
@@ -52,6 +54,18 @@ export default function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} noValidate>
       {errorMessage && <p className="notice-error" role="alert">{errorMessage}. Puede que ese email ya tenga una cuenta.</p>}
+
+      <div className="field">
+        <label htmlFor="firstNameInput">Nombre <span className="optional">(opcional)</span></label>
+        <input
+          type="text"
+          className="input"
+          id="firstNameInput"
+          value={firstName}
+          autoComplete="given-name"
+          onChange={(e) => setFirstName(e.target.value)}
+        />
+      </div>
 
       <div className="field">
         <label htmlFor="emailInput">Email</label>

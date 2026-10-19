@@ -9,7 +9,7 @@ interface GeneralContextType {
   currentUser: any | null;
   setCurrentUser: any,
   logIn: (email: string, password: string) => Promise<{success: boolean, message: string}>;
-  signUp: (body :{email: string, password: string}) => Promise<{success: boolean, message: string}>;
+  signUp: (body :{email: string, password: string, firstName?: string}) => Promise<{success: boolean, message: string}>;
   logOut: () => void;
   getSubjects: () => Promise<any>;
   subjects: any;
@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signUp = async (body :{email: string, password: string}) => {
+  const signUp = async (body :{email: string, password: string, firstName?: string}) => {
     try {
       const data = await backendSignUp(body);
 

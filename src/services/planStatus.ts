@@ -67,3 +67,13 @@ export const formatTermType = (termType?: string | null) =>
   termType === 'CUATRIMESTRAL' ? 'Cuatrimestral' : termType === 'ANUAL' ? 'Anual' : '—';
 
 export const levelName = (level: number) => `${level}º nivel`;
+
+export const STATE_LABEL: Record<SubjectState, string> = {
+  aprobada: 'Aprobada',
+  regular: 'Regular',
+  disponible: 'Podés cursar',
+  bloqueada: 'Bloqueada',
+};
+
+export const joinNames = (names: string[]) =>
+  names.length <= 1 ? names.join('') : `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;

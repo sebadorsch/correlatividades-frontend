@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
 import Home from "src/pages/home/Home.jsx";
 import {AuthProvider} from "src/contexts/GeneralContext.tsx";
 import './index.css';
@@ -10,6 +10,7 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/plan" element={<Navigate to="/" replace />} />
         <Route path="/auth" element={<AuthPage />} />
       </Routes>
     </ AuthProvider>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import RegisterForm from "../../components/RegisterForm/RegisterForm";
 import { useAuth } from "../../contexts/GeneralContext";
@@ -10,7 +10,8 @@ const LEVELS = [1, 2, 3, 4, 5];
 export default function AuthPage() {
   const { currentUser, subjects } = useAuth();
   const navigate = useNavigate();
-  const [isRegister, setIsRegister] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [isRegister, setIsRegister] = useState(searchParams.get('modo') === 'registro');
 
   useEffect(() => {
     if (currentUser) navigate('/');
