@@ -191,6 +191,9 @@ a { color: var(--accent); }
 .notice-ok { background: var(--ok-tint); color: var(--ok-ink); }
 .notice-error { background: var(--neg-tint); color: var(--neg-ink); }
 
+.plan-unavailable { max-width: 560px; }
+.plan-unavailable .btn { justify-self: start; }
+
 .empty {
   border: 2px dashed var(--edge);
   border-radius: var(--radius);

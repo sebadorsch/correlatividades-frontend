@@ -6,9 +6,38 @@ import SubjectPanel from 'src/components/SubjectPanel/SubjectPanel.jsx';
 import PlanSection from 'src/components/PlanSection/PlanSection.jsx';
 import SaveBar from 'src/components/SaveBar/SaveBar.jsx';
 import useSubjectDraft from 'src/hooks/useSubjectDraft.js';
+import { useAuth } from 'src/contexts/GeneralContext.js';
 import { formatTermType } from 'src/services/planStatus.ts';
 
 const LEVELS = [1, 2, 3, 4, 5];
+
+// El plan no llegó desde la API: decirlo y ofrecer reintentar, en vez de un mapa vacío.
+function PlanUnavailable() {
+  const { getSubjects, subjectsError } = useAuth();
+  const [retrying, setRetrying] = useState(false);
+
+  const retry = async () => {
+    setRetrying(true);
+    await getSubjects();
+    setRetrying(false);
+  };
+
+  return (
+    <PageContainer>
+      <section className="card plan-unavailable" role="alert">
+        <h1 className="card-title">{subjectsError ? 'No pudimos cargar el plan de estudio' : 'Cargando el plan de estudio…'}</h1>
+        {subjectsError && (
+          <>
+            <p className="muted">Puede ser un problema de conexión o del servidor. Probá de nuevo en unos segundos.</p>
+            <button type="button" className="btn btn-primary" onClick={retry} disabled={retrying}>
+              {retrying ? 'Reintentando…' : 'Reintentar'}
+            </button>
+          </>
+        )}
+      </section>
+    </PageContainer>
+  );
+}
 
 // Sin sesión: qué hace la app y el plan completo para explorar.
 function Welcome({ sorted, byCode }) {
@@ -54,6 +83,7 @@ export default function Home() {
   const [selectedCode, setSelectedCode] = useState(null);
   const [focus, setFocus] = useState(null);
 
+  if (sorted.length === 0) return <PlanUnavailable />;
   if (!user) return <Welcome sorted={sorted} byCode={byCode} />;
 
   const byState = (state) => sorted.filter((s) => statusByCode.get(s.code)?.state === state);

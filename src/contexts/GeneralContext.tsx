@@ -13,6 +13,7 @@ interface GeneralContextType {
   logOut: () => void;
   getSubjects: () => Promise<any>;
   subjects: any;
+  subjectsError: boolean;
 }
 
 const GeneralContext = React.createContext<GeneralContextType | null>(null);
@@ -63,12 +64,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const [subjects, setSubjects] = useState(null);
+  const [subjectsError, setSubjectsError] = useState(false);
   const getSubjects = async() => {
     try {
+      setSubjectsError(false);
       const data = await getSubjectsFromApi();
       setSubjects(data);
     } catch (e){
-      console.log(e)
+      console.error('[GeneralContext] Error fetching subjects:', e);
+      setSubjectsError(true);
     }
   }
 
@@ -95,7 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   return (
-    <GeneralContext.Provider value={{ currentUser, setCurrentUser, logIn, signUp, logOut, getSubjects, subjects }}>
+    <GeneralContext.Provider value={{ currentUser, setCurrentUser, logIn, signUp, logOut, getSubjects, subjects, subjectsError }}>
       {!loading && children}
     </GeneralContext.Provider>
   );
