@@ -30,10 +30,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('authToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
 
-      const decodedUser = decodeToken(data.accessToken);
-      setCurrentUser(decodedUser);
-      
       axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
+      setCurrentUser(await getMe().catch(() => decodeToken(data.accessToken)));
       return { success: true, message: '' };
     } catch (error: any) {
       console.error('[GeneralContext] Sign in failed:', error);
@@ -48,10 +46,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('authToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
 
-      const decodedUser = decodeToken(data.accessToken);
-      setCurrentUser(decodedUser);
-
       axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
+      setCurrentUser(await getMe().catch(() => decodeToken(data.accessToken)));
       return { success: true, message: '' };
     } catch (error: any) {
       console.error('[GeneralContext] Sign in failed:', error);
@@ -83,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (token && !isTokenExpired(token)) {
         axiosInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
         try {
-          const userFromBackend = await getMe(); // 👈 usar getMe() en vez de decodeToken
+          const userFromBackend = await getMe(); // usar getMe() en vez de decodeToken
           setCurrentUser(userFromBackend);
         } catch (error) {
           console.error('[GeneralContext] Error fetching user from backend:', error);

@@ -1,26 +1,17 @@
-import { FC, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import React from 'react';
+import React, { FC, ReactNode } from 'react';
 import Navbar from "../Navbar/Navbar";
 
 type PageContainerProps = {
   children: ReactNode;
-  includeBackButton?: boolean;
 };
 
-const PageContainer: FC<PageContainerProps> = ({
-  children
-}) => {
-  const navigate = useNavigate();
-
-  return (
-    <>
-      <Navbar />
-      <div className='container mt-4 mb-5'>
-        {children}
-      </div>
-    </>
-  );
-};
+const PageContainer: FC<PageContainerProps> = ({ children }) => (
+  <>
+    <Navbar />
+    <main className="canvas">
+      {children}
+    </main>
+  </>
+);
 
 export default PageContainer;

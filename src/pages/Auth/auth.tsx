@@ -1,56 +1,76 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import RegisterForm from "../../components/RegisterForm/RegisterForm";
 import { useAuth } from "../../contexts/GeneralContext";
-import { useNavigate } from "react-router-dom";
 import PageContainer from "../../components/PageContainer/PageContainer";
-import LoadingAnimation from "../../components/LoadingAnimation";
+
+const LEVELS = [1, 2, 3, 4, 5];
 
 export default function AuthPage() {
-  const { currentUser } = useAuth();
+  const { currentUser, subjects } = useAuth();
   const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(true);
-  const [isRegister, setIsRegister] = useState(false); // <-- Nuevo estado
+  const [isRegister, setIsRegister] = useState(false);
 
   useEffect(() => {
     if (currentUser) navigate('/');
-    setLoading(false);
   }, [currentUser, navigate]);
+
+  const sorted = [...(subjects || [])].sort((a: any, b: any) => a.code - b.code);
 
   return (
     <PageContainer>
-      {loading ? (
-        <LoadingAnimation />
-      ) : (
-        <div className="container mt-4">
-          <div className='row justify-content-center align-items-center'>
-            <div className='col-8'>
-              <h1 className="mb-4">{isRegister ? 'Registrarse' : 'Log in'}</h1>
+      <div className="grid auth-grid">
+        <section className="panel span-5 auth-panel" aria-labelledby="auth-title">
+          <div className="tabs" role="tablist" aria-label="Elegí cómo entrar">
+            <button type="button" role="tab" aria-selected={!isRegister} onClick={() => setIsRegister(false)}>
+              Ingresar
+            </button>
+            <button type="button" role="tab" aria-selected={isRegister} onClick={() => setIsRegister(true)}>
+              Crear cuenta
+            </button>
+          </div>
 
-              {isRegister ? <RegisterForm /> : <LoginForm />}
-
-              <div className="mt-3">
-                {isRegister ? (
-                  <span>
-                ¿Ya tenés cuenta?{' '}
-                    <button className="btn btn-link p-0" onClick={() => setIsRegister(false)}>
-                  Iniciá sesión
-                </button>
-              </span>
-                ) : (
-                  <span>
-                ¿No tenés cuenta?{' '}
-                    <button className="btn btn-link p-0" onClick={() => setIsRegister(true)}>
-                  Registrate
-                </button>
-              </span>
-                )}
-              </div>
+          <div className="title-row" style={{ marginBottom: 20 }}>
+            <div>
+              <h1 id="auth-title">{isRegister ? 'Creá tu cuenta' : 'Ingresá a tu plan'}</h1>
+              <p className="subline">
+                {isRegister
+                  ? 'Con tu cuenta guardás tus materias regulares y aprobadas.'
+                  : 'Mirá qué materias podés cursar según tus correlativas.'}
+              </p>
             </div>
           </div>
-        </div>
-      )}
+
+          {isRegister ? <RegisterForm /> : <LoginForm />}
+
+          <p className="switch-line">
+            {isRegister ? '¿Ya tenés cuenta? ' : '¿Todavía no tenés cuenta? '}
+            <button className="btn-text" type="button" onClick={() => setIsRegister(!isRegister)}>
+              {isRegister ? 'Ingresá' : 'Creá una'}
+            </button>
+          </p>
+        </section>
+
+        <section className="panel span-7" aria-labelledby="plan-preview">
+          <div className="panel-head">
+            <h2 id="plan-preview">Plan 2023 de un vistazo</h2>
+            <span className="panel-note num">{sorted.length} materias · 5 niveles</span>
+          </div>
+          <div className="plan-preview">
+            {LEVELS.map((level) => (
+              <div key={level}>
+                <h3>{level}º nivel</h3>
+                <ol>
+                  {sorted.filter((s: any) => s.courseYear === level).map((s: any) => (
+                    <li key={s.code}><span className="code">{s.code}</span>{s.name}</li>
+                  ))}
+                </ol>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </PageContainer>
   );
 }
