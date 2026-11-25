@@ -11,6 +11,18 @@ const PATHS = {
     </>
   ),
   dot: <circle cx="12" cy="12" r="3" />,
+  x: (
+    <>
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </>
+  ),
+  plus: (
+    <>
+      <path d="M5 12h14" />
+      <path d="M12 5v14" />
+    </>
+  ),
   arrow: (
     <>
       <path d="M5 12h14" />

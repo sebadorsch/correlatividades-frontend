@@ -80,8 +80,8 @@ function Welcome({ sorted, byCode }) {
 
 export default function Home() {
   const {
-    user, sorted, byCode, draft, electives, statusByCode, changes, saveState,
-    setSubjectState, setElectiveHours, save, discard,
+    user, sorted, byCode, draft, electives, electiveList, statusByCode, changes, saveState,
+    setSubjectState, addElective, updateElective, removeElective, save, discard,
   } = useSubjectDraft();
   const [selectedCode, setSelectedCode] = useState(null);
   const [focus, setFocus] = useState(null);
@@ -231,7 +231,7 @@ export default function Home() {
         statusByCode={statusByCode}
         setSubjectState={setSubjectState}
         electives={electives}
-        setElectiveHours={setElectiveHours}
+        electiveActions={{ list: electiveList, add: addElective, update: updateElective, remove: removeElective }}
         selectedCode={selectedCode ?? firstAvailable}
         onSelect={setSelectedCode}
         focus={focus}

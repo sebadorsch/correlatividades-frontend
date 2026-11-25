@@ -1,22 +1,22 @@
 import React from 'react';
 
-// Horas semanales de electivas aprobadas en un nivel, con botones de − y +.
-export default function HoursStepper({ level, value, onChange }) {
-  const id = `electivas-${level}`;
+// Número de horas semanales con botones de − y +.
+export default function HoursStepper({ id, label, value, onChange, min = 1, max = 60 }) {
+  const clamp = (n) => Math.max(min, Math.min(max, n));
   return (
     <div className="stepper">
-      <button type="button" aria-label="Restar una hora" onClick={() => onChange(level, (h) => h - 1)} disabled={value <= 0}>−</button>
-      <label className="visually-hidden" htmlFor={id}>Horas de electivas aprobadas en {level}º nivel</label>
+      <button type="button" aria-label="Restar una hora" onClick={() => onChange(clamp(value - 1))} disabled={value <= min}>−</button>
+      <label className="visually-hidden" htmlFor={id}>{label}</label>
       <input
         id={id}
         type="number"
         inputMode="numeric"
-        min="0"
-        max="60"
+        min={min}
+        max={max}
         value={value}
-        onChange={(e) => onChange(level, Number(e.target.value) || 0)}
+        onChange={(e) => onChange(clamp(Number(e.target.value) || min))}
       />
-      <button type="button" aria-label="Sumar una hora" onClick={() => onChange(level, (h) => h + 1)}>+</button>
+      <button type="button" aria-label="Sumar una hora" onClick={() => onChange(clamp(value + 1))} disabled={value >= max}>+</button>
     </div>
   );
 }

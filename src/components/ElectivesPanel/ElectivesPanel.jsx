@@ -1,9 +1,10 @@
 import React from 'react';
 import { ELECTIVE_REQUIRED } from 'src/services/planStatus.ts';
-import HoursStepper from 'src/components/HoursStepper/HoursStepper.jsx';
+import ElectivesEditor from 'src/components/ElectivesEditor/ElectivesEditor.jsx';
 
-// Detalle de las electivas de un nivel: cuántas horas pide el plan y cuántas aprobaste.
-export default function ElectivesPanel({ level, hours, onChange }) {
+// Detalle de las electivas de un nivel: cuántas horas pide el plan, cuántas aprobaste y cuáles son.
+// Sin sesión (sin actions) solo explica qué pide el plan.
+export default function ElectivesPanel({ level, hours, actions }) {
   const required = ELECTIVE_REQUIRED[level];
   const known = hours !== undefined;
   const done = known ? Math.min(hours, required) : 0;
@@ -12,13 +13,13 @@ export default function ElectivesPanel({ level, hours, onChange }) {
   return (
     <aside className="subject-panel" aria-live="polite">
       {known && (
-        <span className={`tag ${complete ? 'tag-aprobada' : 'tag-bloqueada'}`}>
+        <span className={`tag ${complete ? 'tag-disponible' : 'tag-bloqueada'}`}>
           {complete ? 'Completas' : `Te faltan ${required - hours} h`}
         </span>
       )}
       <h2>Electivas de {level}º nivel</h2>
       <p className="muted">
-        El plan pide {required} horas semanales de electivas en este nivel. Las elige y las ofrece cada facultad.
+        El plan pide {required} horas semanales de electivas en este nivel. Cada facultad elige cuáles ofrece.
       </p>
       {known && (
         <>
@@ -28,13 +29,7 @@ export default function ElectivesPanel({ level, hours, onChange }) {
           <p className="num">{hours} de {required} h aprobadas</p>
         </>
       )}
-      {onChange && (
-        <>
-          <h3 className="panel-label">Horas semanales que aprobaste</h3>
-          <p className="muted">Sumá las horas semanales de cada electiva de {level}º nivel que tengas aprobada.</p>
-          <HoursStepper level={level} value={hours} onChange={onChange} />
-        </>
-      )}
+      {actions && <ElectivesEditor level={level} actions={actions} />}
     </aside>
   );
 }

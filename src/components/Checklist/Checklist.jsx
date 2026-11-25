@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { formatTermType, joinNames, orderLabel } from 'src/services/planStatus.ts';
 import StateChoice from 'src/components/StateChoice/StateChoice.jsx';
-import HoursStepper from 'src/components/HoursStepper/HoursStepper.jsx';
+import ElectivesEditor from 'src/components/ElectivesEditor/ElectivesEditor.jsx';
 import { ELECTIVE_REQUIRED } from 'src/services/planStatus.ts';
 
 const LEVELS = [1, 2, 3, 4, 5];
@@ -22,7 +22,7 @@ const Ring = ({ done, total }) => {
 
 // Carga de materias en el celular: un desplegable por nivel y tres botones grandes por materia.
 export default function Checklist({
-  sorted, statusByCode, byCode, draft, onChange, electives, onElectivesChange, initialOpen, focus,
+  sorted, statusByCode, byCode, draft, onChange, electives, electiveActions, initialOpen, focus,
 }) {
   const [open, setOpen] = useState(() => new Set(initialOpen));
 
@@ -95,10 +95,10 @@ export default function Checklist({
                   <li className="item">
                     <span className="item-name">Electivas</span>
                     <span className="item-hint">
-                      El plan pide {electiveRequired} h semanales. Cargá las horas de las electivas que aprobaste:
-                      {' '}<span className="num">{electives[level]} de {electiveRequired} h</span>.
+                      El plan pide {electiveRequired} h semanales. Aprobadas:
+                      {' '}<span className="num">{electives[level]} de {electiveRequired} h</span>
                     </span>
-                    <HoursStepper level={level} value={electives[level]} onChange={onElectivesChange} />
+                    <ElectivesEditor level={level} actions={electiveActions} />
                   </li>
                 )}
               </ul>

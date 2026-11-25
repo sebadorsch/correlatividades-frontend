@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from 'src/contexts/GeneralContext.js';
 import { postUsersSubjects } from 'src/services/submitUsersSubjects.js';
-import { buildStatus, electivesFromUser, ELECTIVE_LEVELS } from 'src/services/planStatus.ts';
+import {
+  approvedElectiveHours, buildStatus, electiveChanges, electiveListFromUser, newElectiveId,
+} from 'src/services/planStatus.ts';
 
 // Estado que marca el alumno por materia: 'pendiente' | 'regular' | 'aprobada'
 export const draftFromUser = (user) => {
@@ -23,12 +25,12 @@ export const listsFromDraft = (draft) => {
 export default function useSubjectDraft() {
   const { subjects, currentUser: user, setCurrentUser } = useAuth();
   const [draft, setDraft] = useState(() => draftFromUser(user));
-  const [electives, setElectives] = useState(() => electivesFromUser(user));
+  const [electiveList, setElectiveList] = useState(() => electiveListFromUser(user));
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved | error
 
   useEffect(() => {
     setDraft(draftFromUser(user));
-    setElectives(electivesFromUser(user));
+    setElectiveList(electiveListFromUser(user));
   }, [user]);
 
   useEffect(() => {
@@ -46,10 +48,12 @@ export default function useSubjectDraft() {
     [sorted, lists.regularizedSubjects.join(), lists.approvedSubjects.join()],
   );
 
+  // Horas aprobadas por nivel: las usan el mapa y el avance de cada título.
+  const electives = useMemo(() => approvedElectiveHours(electiveList), [electiveList]);
+
   const saved = draftFromUser(user);
-  const savedElectives = electivesFromUser(user);
   const changes = sorted.filter((s) => (draft[s.code] || 'pendiente') !== (saved[s.code] || 'pendiente')).length
-    + ELECTIVE_LEVELS.filter((level) => electives[level] !== savedElectives[level]).length;
+    + electiveChanges(electiveListFromUser(user), electiveList);
 
   const setSubjectState = (code, value) => {
     setDraft((prev) => {
@@ -61,22 +65,23 @@ export default function useSubjectDraft() {
     setSaveState('idle');
   };
 
-  // hours puede ser un número o una función del valor anterior (para los botones − y +).
-  const setElectiveHours = (level, hours) => {
-    setElectives((prev) => {
-      const next = typeof hours === 'function' ? hours(prev[level]) : hours;
-      return { ...prev, [level]: Math.max(0, Math.min(60, next)) };
-    });
+  const addElective = ({ name, level, hours, state }) => {
+    setElectiveList((prev) => [...prev, { id: newElectiveId(), name: name.trim(), level, hours, state }]);
+    setSaveState('idle');
+  };
+
+  const updateElective = (id, patch) => {
+    setElectiveList((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)));
+    setSaveState('idle');
+  };
+
+  const removeElective = (id) => {
+    setElectiveList((prev) => prev.filter((e) => e.id !== id));
     setSaveState('idle');
   };
 
   const save = async () => {
-    const body = {
-      ...listsFromDraft(draft),
-      electiveHoursLevel3: electives[3],
-      electiveHoursLevel4: electives[4],
-      electiveHoursLevel5: electives[5],
-    };
+    const body = { ...listsFromDraft(draft), electives: electiveList };
     setSaveState('saving');
     try {
       const data = await postUsersSubjects(body);
@@ -92,12 +97,12 @@ export default function useSubjectDraft() {
 
   const discard = () => {
     setDraft(draftFromUser(user));
-    setElectives(electivesFromUser(user));
+    setElectiveList(electiveListFromUser(user));
     setSaveState('idle');
   };
 
   return {
-    user, sorted, byCode, draft, electives, statusByCode, lists, changes, saveState,
-    setSubjectState, setElectiveHours, save, discard,
+    user, sorted, byCode, draft, electives, electiveList, statusByCode, lists, changes, saveState,
+    setSubjectState, addElective, updateElective, removeElective, save, discard,
   };
 }

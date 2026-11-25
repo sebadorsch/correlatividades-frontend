@@ -91,11 +91,42 @@ export const ELECTIVE_LEVELS = [3, 4, 5] as const;
 export type ElectiveHours = Record<3 | 4 | 5, number>;
 export const ELECTIVE_REQUIRED: ElectiveHours = { 3: 4, 4: 6, 5: 10 };
 
-export const electivesFromUser = (user: any): ElectiveHours => ({
-  3: user?.electiveHoursLevel3 ?? 0,
-  4: user?.electiveHoursLevel4 ?? 0,
-  5: user?.electiveHoursLevel5 ?? 0,
-});
+// Electiva que carga el alumno. Solo las aprobadas suman horas para el título.
+export type ElectiveState = 'regular' | 'aprobada';
+export type Elective = { id: string; name: string; level: 3 | 4 | 5; hours: number; state: ElectiveState };
+
+export const newElectiveId = () =>
+  (globalThis.crypto?.randomUUID?.() ?? `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`);
+
+// Lista de electivas del usuario. Si todavía no tiene lista (API vieja), arma una por nivel con las horas sueltas.
+export const electiveListFromUser = (user: any): Elective[] => {
+  if (Array.isArray(user?.electives)) return user.electives;
+  return ELECTIVE_LEVELS
+    .map((level) => ({ level, hours: user?.[`electiveHoursLevel${level}`] ?? 0 }))
+    .filter(({ hours }) => hours > 0)
+    .map(({ level, hours }) => ({
+      id: `migrada-${level}`, name: 'Electivas sin detallar', level, hours, state: 'aprobada' as const,
+    }));
+};
+
+// Horas aprobadas por nivel.
+export const approvedElectiveHours = (list: Elective[]): ElectiveHours => {
+  const sum = (level: number) => list
+    .filter((e) => e.level === level && e.state === 'aprobada')
+    .reduce((total, e) => total + e.hours, 0);
+  return { 3: sum(3), 4: sum(4), 5: sum(5) };
+};
+
+// Cuántas electivas cambiaron (agregadas, borradas o modificadas) entre dos listas.
+export const electiveChanges = (saved: Elective[], current: Elective[]) => {
+  const key = (e: Elective) => `${e.name}|${e.level}|${e.hours}|${e.state}`;
+  const before = new Map(saved.map((e) => [e.id, key(e)]));
+  const after = new Map(current.map((e) => [e.id, key(e)]));
+  let changes = 0;
+  after.forEach((k, id) => { if (before.get(id) !== k) changes += 1; });
+  before.forEach((_, id) => { if (!after.has(id)) changes += 1; });
+  return changes;
+};
 
 // Materias de la carrera de grado (sin las que solo pide el título de Analista).
 export const degreeSubjects = (subjects: Subject[]) => subjects.filter((s) => !s.intermediateTitleOnly);

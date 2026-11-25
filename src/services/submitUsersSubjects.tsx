@@ -1,11 +1,10 @@
 import axiosInstance from "../config/axiosConfig";
+import type { Elective } from "./planStatus";
 
 type UserSubjectsBody = {
   regularizedSubjects: number[];
   approvedSubjects: number[];
-  electiveHoursLevel3?: number;
-  electiveHoursLevel4?: number;
-  electiveHoursLevel5?: number;
+  electives?: Elective[];
 };
 
 export const postUsersSubjects = async (body: UserSubjectsBody): Promise<any> => {

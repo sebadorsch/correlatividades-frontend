@@ -19,7 +19,7 @@ const useIsPhone = () => {
 
 // Tu plan, editable: mapa por niveles en escritorio y checklist en el celular.
 export default function PlanSection({
-  sorted, byCode, draft, statusByCode, setSubjectState, electives, setElectiveHours, selectedCode, onSelect, focus,
+  sorted, byCode, draft, statusByCode, setSubjectState, electives, electiveActions, selectedCode, onSelect, focus,
 }) {
   const electiveLevel = typeof selectedCode === 'string' ? Number(selectedCode.slice(1)) : null;
   const isPhone = useIsPhone();
@@ -58,7 +58,7 @@ export default function PlanSection({
           draft={draft}
           onChange={setSubjectState}
           electives={electives}
-          onElectivesChange={setElectiveHours}
+          electiveActions={electiveActions}
           initialOpen={[firstOpenLevel]}
           focus={focus}
         />
@@ -82,7 +82,7 @@ export default function PlanSection({
             </div>
           </div>
           {electiveLevel ? (
-            <ElectivesPanel level={electiveLevel} hours={electives[electiveLevel]} onChange={setElectiveHours} />
+            <ElectivesPanel level={electiveLevel} hours={electives[electiveLevel]} actions={electiveActions} />
           ) : (
             <SubjectPanel
               subject={byCode.get(selectedCode)}
