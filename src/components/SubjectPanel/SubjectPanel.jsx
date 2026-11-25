@@ -16,23 +16,14 @@ const Requirement = ({ subject, fallback, kind, missing }) => (
   </li>
 );
 
-// Detalle de una materia: qué pide para cursarla y, con sesión, tu situación.
-export default function SubjectPanel({ subject, status, byCode, value, onChange }) {
-  if (!subject) return null;
-
+// Cuerpo del detalle: nota del Analista, correlativas y, con sesión, tu situación.
+// Lo usan el panel de escritorio y la fila desplegada del celular.
+export function SubjectDetail({ subject, status, byCode, value, onChange }) {
   const regular = subject.requiredSubjectsToEnroll;
   const approved = subject.requiredSubjectsToPass;
 
   return (
-    <aside className="subject-panel" aria-live="polite">
-      <div className="panel-kicker">
-        <span className="code">{orderLabel(subject)}</span>
-        {status && <span className={`tag tag-${status.state}`}>{STATE_LABEL[status.state]}</span>}
-      </div>
-      <h2>{subject.name}</h2>
-      <p className="muted">
-        {subject.courseYear}º nivel · {formatTermType(subject.termType)} · {subject.weeklyHours ?? '—'} h por semana
-      </p>
+    <>
       {subject.intermediateTitleOnly && (
         <p className="panel-note-box">
           Solo la pide el título intermedio de Analista. Es la última materia de ese título: para rendirla
@@ -74,6 +65,25 @@ export default function SubjectPanel({ subject, status, byCode, value, onChange 
           <StateChoice code={subject.code} name={subject.name} value={value} onChange={onChange} />
         </>
       )}
+    </>
+  );
+}
+
+// Detalle de una materia en escritorio: qué pide para cursarla y, con sesión, tu situación.
+export default function SubjectPanel({ subject, status, byCode, value, onChange }) {
+  if (!subject) return null;
+
+  return (
+    <aside className="subject-panel" aria-live="polite">
+      <div className="panel-kicker">
+        <span className="code">{orderLabel(subject)}</span>
+        {status && <span className={`tag tag-${status.state}`}>{STATE_LABEL[status.state]}</span>}
+      </div>
+      <h2>{subject.name}</h2>
+      <p className="muted">
+        {subject.courseYear}º nivel · {formatTermType(subject.termType)} · {subject.weeklyHours ?? '—'} h por semana
+      </p>
+      <SubjectDetail subject={subject} status={status} byCode={byCode} value={value} onChange={onChange} />
     </aside>
   );
 }

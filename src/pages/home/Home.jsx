@@ -8,6 +8,8 @@ import SaveBar from 'src/components/SaveBar/SaveBar.jsx';
 import useSubjectDraft from 'src/hooks/useSubjectDraft.js';
 import { useAuth } from 'src/contexts/GeneralContext.js';
 import ElectivesPanel from 'src/components/ElectivesPanel/ElectivesPanel.jsx';
+import MobilePlan from 'src/components/MobilePlan/MobilePlan.jsx';
+import useIsPhone from 'src/hooks/useIsPhone.js';
 import {
   analistaProgress, degreeSubjects, formatTermType, ingenieriaProgress, orderLabel,
 } from 'src/services/planStatus.ts';
@@ -45,6 +47,7 @@ function PlanUnavailable() {
 // Sin sesión: qué hace la app y el plan completo para explorar.
 function Welcome({ sorted, byCode }) {
   const navigate = useNavigate();
+  const isPhone = useIsPhone();
   const [selectedCode, setSelectedCode] = useState(19);
 
   return (
@@ -64,16 +67,26 @@ function Welcome({ sorted, byCode }) {
         </div>
       </section>
 
-      <section className="plan-layout" aria-labelledby="plan-title">
-        <div className="plan-main">
-          <h2 id="plan-title" className="section-title">El plan completo</h2>
-          <p className="muted section-sub">Tocá una materia para ver sus correlativas</p>
-          <PlanMap sorted={sorted} selectedCode={selectedCode} onSelect={setSelectedCode} />
-        </div>
-        {typeof selectedCode === 'string'
-          ? <ElectivesPanel level={Number(selectedCode.slice(1))} />
-          : <SubjectPanel subject={byCode.get(selectedCode)} byCode={byCode} />}
-      </section>
+      {isPhone ? (
+        <section className="plan-section" aria-labelledby="plan-title">
+          <div>
+            <h2 id="plan-title" className="section-title">El plan completo</h2>
+            <p className="muted section-sub">Tocá una materia para ver sus correlativas</p>
+          </div>
+          <MobilePlan sorted={sorted} byCode={byCode} />
+        </section>
+      ) : (
+        <section className="plan-layout" aria-labelledby="plan-title">
+          <div className="plan-main">
+            <h2 id="plan-title" className="section-title">El plan completo</h2>
+            <p className="muted section-sub">Tocá una materia para ver sus correlativas</p>
+            <PlanMap sorted={sorted} selectedCode={selectedCode} onSelect={setSelectedCode} />
+          </div>
+          {typeof selectedCode === 'string'
+            ? <ElectivesPanel level={Number(selectedCode.slice(1))} />
+            : <SubjectPanel subject={byCode.get(selectedCode)} byCode={byCode} />}
+        </section>
+      )}
     </PageContainer>
   );
 }

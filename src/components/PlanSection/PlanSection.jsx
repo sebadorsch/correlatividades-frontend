@@ -1,21 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PlanMap from 'src/components/PlanMap/PlanMap.jsx';
 import SubjectPanel from 'src/components/SubjectPanel/SubjectPanel.jsx';
-import Checklist from 'src/components/Checklist/Checklist.jsx';
+import MobilePlan from 'src/components/MobilePlan/MobilePlan.jsx';
+import useIsPhone from 'src/hooks/useIsPhone.js';
 import ElectivesPanel from 'src/components/ElectivesPanel/ElectivesPanel.jsx';
-
-const PHONE_QUERY = '(max-width: 760px)';
-
-const useIsPhone = () => {
-  const [isPhone, setIsPhone] = useState(() => window.matchMedia(PHONE_QUERY).matches);
-  useEffect(() => {
-    const media = window.matchMedia(PHONE_QUERY);
-    const onChange = () => setIsPhone(media.matches);
-    media.addEventListener('change', onChange);
-    return () => media.removeEventListener('change', onChange);
-  }, []);
-  return isPhone;
-};
 
 // Tu plan, editable: mapa por niveles en escritorio y checklist en el celular.
 export default function PlanSection({
@@ -26,7 +14,6 @@ export default function PlanSection({
   const [filter, setFilter] = useState('todas');
 
   const count = (state) => sorted.filter((s) => statusByCode.get(s.code)?.state === state).length;
-  const firstOpenLevel = sorted.find((s) => statusByCode.get(s.code)?.state !== 'aprobada')?.courseYear ?? 1;
 
   return (
     <section className="plan-section" id="mi-plan" aria-labelledby="mi-plan-title">
@@ -35,7 +22,7 @@ export default function PlanSection({
           <h2 id="mi-plan-title" className="section-title">Tu plan de estudio</h2>
           <p className="muted section-sub">
             {isPhone
-              ? 'Marcá cómo te fue en cada materia'
+              ? 'Tocá una materia para ver sus correlativas y marcar cómo te fue'
               : 'Tocá una materia para ver sus correlativas y cambiar tu situación'}
           </p>
         </div>
@@ -51,7 +38,7 @@ export default function PlanSection({
       </div>
 
       {isPhone ? (
-        <Checklist
+        <MobilePlan
           sorted={sorted}
           statusByCode={statusByCode}
           byCode={byCode}
@@ -59,7 +46,6 @@ export default function PlanSection({
           onChange={setSubjectState}
           electives={electives}
           electiveActions={electiveActions}
-          initialOpen={[firstOpenLevel]}
           focus={focus}
         />
       ) : (
