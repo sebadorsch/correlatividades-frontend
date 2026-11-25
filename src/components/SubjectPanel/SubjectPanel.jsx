@@ -1,12 +1,16 @@
 import React from 'react';
-import { formatTermType, STATE_LABEL } from 'src/services/planStatus.ts';
+import { formatTermType, orderLabel, STATE_LABEL } from 'src/services/planStatus.ts';
 import StateChoice from 'src/components/StateChoice/StateChoice.jsx';
+import Icon from 'src/components/Icons/Icon.jsx';
 
-const Requirement = ({ name, kind, missing }) => (
+const Requirement = ({ subject, fallback, kind, missing }) => (
   <li className={missing === undefined ? 'req' : missing ? 'req is-missing' : 'req is-ok'}>
-    <span className="req-icon" aria-hidden="true">{missing === undefined ? '' : missing ? '!' : '✓'}</span>
+    <span className="req-icon">
+      <Icon name={missing === undefined ? 'dot' : missing ? 'alert' : 'check'} />
+    </span>
+    <span className="code">{orderLabel(subject)}</span>
     <span>
-      {name}
+      {subject?.name ?? fallback}
       <small>{kind}{missing ? ' · te falta' : ''}</small>
     </span>
   </li>
@@ -21,7 +25,10 @@ export default function SubjectPanel({ subject, status, byCode, value, onChange 
 
   return (
     <aside className="subject-panel" aria-live="polite">
-      {status && <span className={`tag tag-${status.state}`}>{STATE_LABEL[status.state]}</span>}
+      <div className="panel-kicker">
+        <span className="code">{orderLabel(subject)}</span>
+        {status && <span className={`tag tag-${status.state}`}>{STATE_LABEL[status.state]}</span>}
+      </div>
       <h2>{subject.name}</h2>
       <p className="muted">
         {subject.courseYear}º nivel · {formatTermType(subject.termType)} · {subject.weeklyHours ?? '—'} h por semana
@@ -34,7 +41,7 @@ export default function SubjectPanel({ subject, status, byCode, value, onChange 
       )}
 
       {regular.length + approved.length === 0 ? (
-        <p className="muted">No tiene correlativas: la podés cursar desde el principio.</p>
+        <p className="muted">No tiene correlativas, la podés cursar desde el principio</p>
       ) : (
         <>
           <h3 className="panel-label">Para cursarla necesitás</h3>
@@ -42,7 +49,8 @@ export default function SubjectPanel({ subject, status, byCode, value, onChange 
             {regular.map((code) => (
               <Requirement
                 key={`r${code}`}
-                name={byCode.get(code)?.name ?? code}
+                subject={byCode.get(code)}
+                fallback={code}
                 kind="Regular"
                 missing={status ? status.missingRegular.includes(code) : undefined}
               />
@@ -50,7 +58,8 @@ export default function SubjectPanel({ subject, status, byCode, value, onChange 
             {approved.map((code) => (
               <Requirement
                 key={`a${code}`}
-                name={byCode.get(code)?.name ?? code}
+                subject={byCode.get(code)}
+                fallback={code}
                 kind="Aprobada"
                 missing={status ? status.missingApproved.includes(code) : undefined}
               />

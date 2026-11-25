@@ -69,6 +69,13 @@ export const formatTermType = (termType?: string | null) =>
 
 export const levelName = (level: number) => `${level}º nivel`;
 
+// Número de orden como figura en el plan (Ord. 1878): 01, 09, 24… El Seminario Integrador del
+// Analista no tiene número propio en el plan de Ingeniería; se muestra como 23A, igual que en las regionales.
+export const orderLabel = (subject?: Pick<Subject, 'code' | 'intermediateTitleOnly'> | null) => {
+  if (!subject) return '';
+  return subject.intermediateTitleOnly ? '23A' : String(subject.code).padStart(2, '0');
+};
+
 export const STATE_LABEL: Record<SubjectState, string> = {
   aprobada: 'Aprobada',
   regular: 'Regular',

@@ -1,5 +1,6 @@
 import React from 'react';
-import { ELECTIVE_REQUIRED, STATE_LABEL } from 'src/services/planStatus.ts';
+import { ELECTIVE_REQUIRED, STATE_LABEL, orderLabel } from 'src/services/planStatus.ts';
+import Icon from 'src/components/Icons/Icon.jsx';
 
 const LEVELS = [1, 2, 3, 4, 5];
 
@@ -45,9 +46,17 @@ export default function PlanMap({ sorted, statusByCode, electives, selectedCode,
                     onClick={() => onSelect(s.code)}
                     aria-pressed={s.code === selectedCode}
                   >
+                    <span className="map-card-top">
+                      <span className="code">{orderLabel(s)}</span>
+                      {state !== 'neutral' && (
+                        <span className="map-card-state">
+                          {state === 'aprobada' && <Icon name="check" size={12} />}
+                          {STATE_LABEL[state]}
+                        </span>
+                      )}
+                    </span>
                     <span className="map-card-name">{s.name}</span>
                     {s.intermediateTitleOnly && <span className="map-card-note">Solo título de Analista</span>}
-                    {state !== 'neutral' && <span className="map-card-state">{STATE_LABEL[state]}</span>}
                   </button>
                 );
               })}
@@ -65,7 +74,7 @@ export default function PlanMap({ sorted, statusByCode, electives, selectedCode,
                   aria-pressed={selectedCode === electiveKey}
                 >
                   <span className="map-card-name">Electivas</span>
-                  <span className="map-card-state num">
+                  <span className="map-card-state num muted">
                     {electiveHours === undefined ? `${electiveRequired} h semanales` : `${electiveHours} de ${electiveRequired} h`}
                   </span>
                 </button>

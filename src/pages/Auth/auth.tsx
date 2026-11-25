@@ -4,6 +4,7 @@ import LoginForm from "../../components/LoginForm/LoginForm";
 import RegisterForm from "../../components/RegisterForm/RegisterForm";
 import { useAuth } from "../../contexts/GeneralContext";
 import PageContainer from "../../components/PageContainer/PageContainer";
+import { orderLabel } from "../../services/planStatus";
 
 const LEVELS = [1, 2, 3, 4, 5];
 
@@ -32,13 +33,13 @@ export default function AuthPage() {
             </button>
           </div>
 
-          <div className="title-row" style={{ marginBottom: 20 }}>
+          <div className="title-row">
             <div>
               <h1 id="auth-title">{isRegister ? 'Creá tu cuenta' : 'Ingresá a tu plan'}</h1>
               <p className="subline">
                 {isRegister
-                  ? 'Con tu cuenta guardás tus materias regulares y aprobadas.'
-                  : 'Mirá qué materias podés cursar según tus correlativas.'}
+                  ? 'Con tu cuenta guardás tus materias regulares y aprobadas'
+                  : 'Mirá qué materias podés cursar según tus correlativas'}
               </p>
             </div>
           </div>
@@ -64,7 +65,7 @@ export default function AuthPage() {
                 <h3>{level}º nivel</h3>
                 <ol>
                   {sorted.filter((s: any) => s.courseYear === level).map((s: any) => (
-                    <li key={s.code}><span className="code">{s.code}</span>{s.name}</li>
+                    <li key={s.code}><span className="code">{orderLabel(s)}</span>{s.name}</li>
                   ))}
                 </ol>
               </div>

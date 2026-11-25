@@ -9,7 +9,7 @@ export default function SaveBar({ changes, saveState, onSave, onDiscard }) {
       ? 'No se pudo guardar. Probá de nuevo.'
       : changes > 0
         ? `${changes} ${changes === 1 ? 'cambio sin guardar' : 'cambios sin guardar'}`
-        : 'Listo, guardamos tus materias.';
+        : 'Listo, guardamos tus materias';
 
   return (
     <div className="savebar" role="status">

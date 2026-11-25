@@ -9,7 +9,7 @@ import useSubjectDraft from 'src/hooks/useSubjectDraft.js';
 import { useAuth } from 'src/contexts/GeneralContext.js';
 import ElectivesPanel from 'src/components/ElectivesPanel/ElectivesPanel.jsx';
 import {
-  analistaProgress, degreeSubjects, formatTermType, ingenieriaProgress,
+  analistaProgress, degreeSubjects, formatTermType, ingenieriaProgress, orderLabel,
 } from 'src/services/planStatus.ts';
 
 const LEVELS = [1, 2, 3, 4, 5];
@@ -54,15 +54,12 @@ function Welcome({ sorted, byCode }) {
           <h1>Sabé qué materias podés cursar</h1>
           <p className="lede">
             Marcá tus materias regulares y aprobadas del Plan 2023 de Ingeniería en Sistemas y te decimos
-            a cuáles te podés anotar y qué te falta para el resto.
+            a cuáles te podés anotar y qué te falta para el resto
           </p>
         </div>
         <div className="welcome-actions">
           <button type="button" className="btn btn-primary btn-lg" onClick={() => navigate('/auth?modo=registro')}>
             Crear mi cuenta
-          </button>
-          <button type="button" className="btn btn-ghost btn-lg" onClick={() => navigate('/auth')}>
-            Ya tengo cuenta
           </button>
         </div>
       </section>
@@ -70,7 +67,7 @@ function Welcome({ sorted, byCode }) {
       <section className="plan-layout" aria-labelledby="plan-title">
         <div className="plan-main">
           <h2 id="plan-title" className="section-title">El plan completo</h2>
-          <p className="muted section-sub">Tocá una materia para ver sus correlativas.</p>
+          <p className="muted section-sub">Tocá una materia para ver sus correlativas</p>
           <PlanMap sorted={sorted} selectedCode={selectedCode} onSelect={setSelectedCode} />
         </div>
         {typeof selectedCode === 'string'
@@ -109,7 +106,7 @@ export default function Home() {
       name: 'Ingeniería en Sistemas de Información',
       electivesLabel: 'Electivas de 3º a 5º nivel',
       progress: ingenieriaProgress(sorted, statusByCode, electives),
-      note: 'Además pide 200 h de Práctica Profesional Supervisada.',
+      note: 'Además pide 200 h de Práctica Profesional Supervisada',
     },
   ];
   const hours = available.reduce((sum, s) => sum + (s.weeklyHours || 0), 0);
@@ -131,56 +128,39 @@ export default function Home() {
       <section className="hello">
         <h1>Tu carrera</h1>
         <p className="lede">
-          Llevás {approvedCount} de {degree.length} materias aprobadas.
+          Llevás {approvedCount} de {degree.length} materias aprobadas
         </p>
       </section>
 
       <div className="home-grid">
-        <section className="card" aria-labelledby="disponibles">
-          <h2 id="disponibles" className="card-title">Este cuatrimestre podés anotarte en</h2>
-          <p className="big-figure">
-            <b className="num">{available.length}</b>
-            <span>
-              {available.length === 1 ? 'materia' : 'materias'}
-              {available.length > 0 && `, ${hours} horas por semana si las cursás todas`}
-            </span>
-          </p>
-          {available.length === 0 ? (
-            <p className="empty">
-              Por ahora ninguna materia cumple las correlativas. Revisá que tus materias estén al día en el plan de abajo.
+        <div className="home-main">
+          <section className="card" aria-labelledby="disponibles">
+            <h2 id="disponibles" className="card-title">Ahora podés anotarte en</h2>
+            <p className="big-figure">
+              <b className="num">{available.length}</b>
+              <span>
+                {available.length === 1 ? 'materia' : 'materias'}
+                {available.length > 0 && `, ${hours} horas por semana si las cursás todas`}
+              </span>
             </p>
-          ) : (
-            <ul className="subject-tiles">
-              {available.map((s) => (
-                <li key={s.code}>
-                  <button type="button" className="subject-tile" onClick={() => openInPlan(s.code)}>
-                    <strong>{s.name}</strong>
-                    <small>{s.courseYear}º nivel · {formatTermType(s.termType)} · {s.weeklyHours ?? '—'} h</small>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <div className="home-side">
-          {pendingFinals.length > 0 && (
-            <section className="card" aria-labelledby="finales">
-              <h2 id="finales" className="card-title">
-                Te {pendingFinals.length === 1 ? 'queda 1 final' : `quedan ${pendingFinals.length} finales`}
-              </h2>
-              <ul className="plain-list">
-                {pendingFinals.map((s) => (
+            {available.length === 0 ? (
+              <p className="empty">
+                Por ahora ninguna materia cumple las correlativas. Revisá que tus materias estén al día en el plan de abajo.
+              </p>
+            ) : (
+              <ul className="subject-list">
+                {available.map((s) => (
                   <li key={s.code}>
-                    <button type="button" className="link-row" onClick={() => openInPlan(s.code)}>
-                      <span>{s.name}</span>
-                      <small className="muted">{s.courseYear}º nivel</small>
+                    <button type="button" className="subject-row" onClick={() => openInPlan(s.code)}>
+                      <span className="code">{orderLabel(s)}</span>
+                      <span className="name">{s.name}</span>
+                      <small className="num">{s.courseYear}º nivel · {formatTermType(s.termType)} · {s.weeklyHours ?? '—'} h</small>
                     </button>
                   </li>
                 ))}
               </ul>
-            </section>
-          )}
+            )}
+          </section>
 
           <section className="card" aria-labelledby="avance">
             <h2 id="avance" className="card-title">Tu avance por nivel</h2>
@@ -199,6 +179,27 @@ export default function Home() {
               })}
             </div>
           </section>
+        </div>
+
+        <div className="home-side">
+          {pendingFinals.length > 0 && (
+            <section className="card" aria-labelledby="finales">
+              <h2 id="finales" className="card-title">
+                Te {pendingFinals.length === 1 ? 'queda 1 final' : `quedan ${pendingFinals.length} finales`}
+              </h2>
+              <ul className="plain-list">
+                {pendingFinals.map((s) => (
+                  <li key={s.code}>
+                    <button type="button" className="link-row" onClick={() => openInPlan(s.code)}>
+                      <span className="code">{orderLabel(s)}</span>
+                      <span>{s.name}</span>
+                      <small className="muted">{s.courseYear}º nivel</small>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section className="card" aria-labelledby="titulos">
             <h2 id="titulos" className="card-title">Tus títulos</h2>

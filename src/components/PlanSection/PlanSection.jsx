@@ -35,8 +35,8 @@ export default function PlanSection({
           <h2 id="mi-plan-title" className="section-title">Tu plan de estudio</h2>
           <p className="muted section-sub">
             {isPhone
-              ? 'Marcá cómo te fue en cada materia.'
-              : 'Tocá una materia para ver sus correlativas y cambiar tu situación.'}
+              ? 'Marcá cómo te fue en cada materia'
+              : 'Tocá una materia para ver sus correlativas y cambiar tu situación'}
           </p>
         </div>
         {!isPhone && (

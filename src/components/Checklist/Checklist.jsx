@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { formatTermType, joinNames } from 'src/services/planStatus.ts';
+import { formatTermType, joinNames, orderLabel } from 'src/services/planStatus.ts';
 import StateChoice from 'src/components/StateChoice/StateChoice.jsx';
 import HoursStepper from 'src/components/HoursStepper/HoursStepper.jsx';
 import { ELECTIVE_REQUIRED } from 'src/services/planStatus.ts';
@@ -72,7 +72,10 @@ export default function Checklist({
                   ];
                   return (
                     <li className="item" key={s.code} id={`materia-${s.code}`}>
-                      <span className="item-name">{s.name}</span>
+                      <span className="item-title">
+                        <span className="code">{orderLabel(s)}</span>
+                        <span className="item-name">{s.name}</span>
+                      </span>
                       {s.intermediateTitleOnly && <span className="item-note">Solo título de Analista</span>}
                       {status.state === 'disponible' && <span className="item-hint is-go">Podés cursarla</span>}
                       {status.state === 'bloqueada' && <span className="item-hint">Te falta {joinNames(missing)}</span>}
