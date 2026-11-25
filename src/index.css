@@ -154,6 +154,7 @@ a { color: var(--accent-text); }
   padding: 24px var(--pad) 96px;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 4px 8px;
   font-size: 14px;
   color: var(--muted);
