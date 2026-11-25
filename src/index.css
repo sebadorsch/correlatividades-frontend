@@ -131,7 +131,7 @@ a { color: var(--accent-text); }
 .canvas {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 40px var(--pad) 120px;
+  padding: 40px var(--pad) 48px;
   display: grid;
   gap: 24px;
 }
@@ -143,6 +143,31 @@ a { color: var(--accent-text); }
   line-height: 1.15;
   letter-spacing: -0.015em;
 }
+
+/* ---------- pie ---------- */
+.site-footer { border-top: 1px solid var(--edge); }
+
+/* El espacio de abajo deja lugar a la barra de guardado, que es fija. */
+.site-footer-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px var(--pad) 96px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.site-footer a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--edge-strong);
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--fast) var(--ease);
+}
+
+.site-footer a:hover { text-decoration-color: var(--ink); }
 
 /* ---------- botones ---------- */
 .btn {
