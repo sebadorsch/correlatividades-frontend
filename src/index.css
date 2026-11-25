@@ -1,35 +1,38 @@
-/* Correlatividades: el plan impreso en la cartelera del departamento.
-   Papel y tinta para todo; el verde solo marca lo que podés cursar y la acción principal.
-   Regular en ámbar (estado a medio camino). Aprobada se ve resuelta y tranquila, no gritona.
+/* Correlatividades: el plan impreso en la cartelera del departamento, en azul UTN.
+   Fondos gris azulado tranquilos; azul institucional para la acción principal y el progreso,
+   y un azul más vivo solo para lo que podés cursar. Regular en ámbar. Aprobada se ve resuelta y tranquila.
    Firma: el número de orden oficial de cada materia, en mono. */
 :root {
-  /* rampa neutra, papel apenas cálido */
-  --ground: #f4f4f1;
+  /* rampa neutra, gris levemente azulado */
+  --ground: #f2f4f7;
   --surface: #ffffff;
-  --soft: #ecece8;
-  --edge: #e0e0db;
-  --edge-strong: #c9c9c3;
-  --ink: #1c1d1a;
-  --muted: #5d5f59;
-  --faint: #6f716a;
+  --soft: #e7eaf0;
+  --edge: #dce1e8;
+  --edge-strong: #c4cbd6;
+  --ink: #141a26;
+  --muted: #566072;
+  --faint: #6c7587;
 
-  /* un acento */
-  --accent: #0f7b5f;
-  --accent-hover: #0b6650;
+  /* azul UTN: botones y progreso */
+  --accent: #1f3a6b;
+  --accent-hover: #172d55;
   --accent-ink: #ffffff;
-  --accent-tint: #e4f1eb;
-  --accent-tint-hover: #d6eae1;
+  /* azul vivo: lo que podés cursar, selección y foco */
+  --accent-edge: #2f6fd6;
+  --accent-text: #2459b8;
+  --accent-tint: #e6effd;
+  --accent-tint-hover: #d9e6fb;
 
   /* estados del plan */
-  --aprobada: #ecece8;
-  --aprobada-ink: #3f413c;
-  --regular-tint: #fbf2df;
-  --regular-edge: #e6cf9c;
-  --regular-ink: #7a5000;
+  --aprobada: #e7eaf0;
+  --aprobada-ink: #384255;
+  --regular-tint: #fdf0d6;
+  --regular-edge: #ecc988;
+  --regular-ink: #7a4b00;
 
   /* semánticos */
   --ok-tint: var(--accent-tint);
-  --ok-ink: var(--accent);
+  --ok-ink: var(--accent-text);
   --neg-tint: #fbe9e6;
   --neg-ink: #a1291c;
 
@@ -62,9 +65,9 @@ body {
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { text-wrap: balance; font-weight: 500; }
 button, input { font: inherit; color: inherit; }
-a { color: var(--accent); }
+a { color: var(--accent-text); }
 
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--accent-edge); outline-offset: 2px; }
 
 .num { font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); }
@@ -105,7 +108,7 @@ a { color: var(--accent); }
 
 .mark-ink { fill: var(--ink); }
 .mark-soft { fill: var(--edge-strong); }
-.mark-accent { fill: var(--accent); }
+.mark-accent { fill: var(--accent-edge); }
 
 .brand-name { font-weight: 600; font-size: 16px; }
 .brand-scope { color: var(--muted); font-size: 14px; white-space: nowrap; }
@@ -165,7 +168,7 @@ a { color: var(--accent); }
 .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
 
 .btn-dark { background: var(--ink); color: var(--surface); }
-.btn-dark:hover { background: #33352f; }
+.btn-dark:hover { background: #2a3142; }
 
 .btn-ghost { background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1px var(--edge-strong); }
 .btn-ghost:hover:not(:disabled) { background: var(--soft); }
@@ -268,7 +271,7 @@ a { color: var(--accent); }
 .subject-row:hover { background: var(--ground); }
 .subject-row .name { line-height: 1.3; }
 .subject-row small { grid-column: 2; color: var(--muted); font-size: 14px; }
-.subject-row .go { color: var(--accent); }
+.subject-row .go { color: var(--accent-text); }
 
 .plain-list { list-style: none; margin: 0; padding: 0; display: grid; }
 
@@ -300,7 +303,7 @@ a { color: var(--accent); }
 .level-bars { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .level-bar { display: grid; gap: 8px; font-size: 12px; color: var(--muted); }
 .bar { height: 6px; border-radius: 3px; background: var(--soft); overflow: hidden; }
-.bar i { display: block; height: 100%; border-radius: 3px; background: var(--ink); }
+.bar i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
 
 /* ---------- bienvenida (sin sesión) ---------- */
 .welcome {
@@ -411,9 +414,9 @@ a { color: var(--accent); }
 .st-regular { background: var(--regular-tint); box-shadow: inset 0 0 0 1px var(--regular-edge); }
 .st-regular .map-card-state { color: var(--regular-ink); }
 
-.st-disponible { background: var(--accent-tint); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.st-disponible { background: var(--accent-tint); box-shadow: inset 0 0 0 1.5px var(--accent-edge); }
 .st-disponible:hover { background: var(--accent-tint-hover); }
-.st-disponible .map-card-state { color: var(--accent); }
+.st-disponible .map-card-state { color: var(--accent-text); }
 
 .st-bloqueada { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 1px var(--edge); }
 .st-bloqueada:hover { background: var(--surface); }
@@ -432,7 +435,7 @@ a { color: var(--accent); }
 
 .map-card.is-dim { opacity: 0.3; }
 .map-card.is-required { outline: 1.5px solid var(--ink); outline-offset: 2px; }
-.map-card.is-selected { outline: 2px solid var(--accent); outline-offset: 2px; }
+.map-card.is-selected { outline: 2px solid var(--accent-edge); outline-offset: 2px; }
 
 .legend {
   display: flex;
@@ -525,7 +528,7 @@ a { color: var(--accent); }
 
 .tag-aprobada { background: var(--aprobada); color: var(--aprobada-ink); }
 .tag-regular { background: var(--regular-tint); color: var(--regular-ink); }
-.tag-disponible { background: var(--accent-tint); color: var(--accent); }
+.tag-disponible { background: var(--accent-tint); color: var(--accent-text); }
 .tag-bloqueada { background: var(--soft); color: var(--muted); }
 
 .reqs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -544,7 +547,7 @@ a { color: var(--accent); }
 
 .req-icon { width: 20px; height: 20px; display: grid; place-items: center; color: var(--faint); }
 
-.req.is-ok .req-icon { color: var(--accent); }
+.req.is-ok .req-icon { color: var(--accent-text); }
 .req.is-missing .req-icon { color: var(--neg-ink); }
 .req.is-missing small { color: var(--neg-ink); }
 
@@ -598,7 +601,7 @@ a { color: var(--accent); }
 
 .ring { width: 24px; height: 24px; }
 .ring-track { stroke: var(--soft); }
-.ring-fill { stroke: var(--ink); }
+.ring-fill { stroke: var(--accent); }
 
 .level-items { list-style: none; margin: 0; padding: 0 12px 12px; display: grid; gap: 8px; }
 
@@ -614,7 +617,7 @@ a { color: var(--accent); }
 .item-title { display: grid; grid-template-columns: 24px 1fr; column-gap: 4px; align-items: baseline; }
 .item-name { font-weight: 500; line-height: 1.3; }
 .item-hint { font-size: 14px; color: var(--muted); line-height: 1.4; }
-.item-hint.is-go { color: var(--accent); font-weight: 500; }
+.item-hint.is-go { color: var(--accent-text); font-weight: 500; }
 
 /* Barra de guardado */
 .savebar {
@@ -639,13 +642,15 @@ a { color: var(--accent); }
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  box-shadow: 0 8px 24px rgba(28, 29, 26, 0.18);
+  box-shadow: 0 8px 24px rgba(20, 26, 38, 0.18);
   font-weight: 500;
   min-height: 56px;
 }
 
 .savebar-error { color: #ffb4ab; }
 .savebar-actions { display: flex; gap: 8px; }
+.savebar .btn-primary { background: var(--accent-edge); }
+.savebar .btn-primary:hover:not(:disabled) { background: var(--accent-text); }
 .savebar .btn-ghost { background: transparent; color: var(--surface); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3); }
 .savebar .btn-ghost:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); }
 
@@ -714,7 +719,7 @@ a { color: var(--accent); }
 }
 
 .input:hover { border-color: var(--muted); }
-.input:focus { outline: 3px solid var(--accent-tint); border-color: var(--accent); }
+.input:focus { outline: 3px solid var(--accent-tint); border-color: var(--accent-edge); }
 .input.is-invalid { border-color: var(--neg-ink); }
 
 .input-wrap { position: relative; }
