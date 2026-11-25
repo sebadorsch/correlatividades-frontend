@@ -5,9 +5,10 @@ import MobilePlan from 'src/components/MobilePlan/MobilePlan.jsx';
 import useIsPhone from 'src/hooks/useIsPhone.js';
 import ElectivesPanel from 'src/components/ElectivesPanel/ElectivesPanel.jsx';
 
-// Tu plan, editable: mapa por niveles en escritorio y checklist en el celular.
+// Tu plan, editable: mapa por niveles en escritorio y lista por niveles en el celular.
 export default function PlanSection({
   sorted, byCode, draft, statusByCode, setSubjectState, electives, electiveActions, selectedCode, onSelect, focus,
+  mobileFilter = null,
 }) {
   const electiveLevel = typeof selectedCode === 'string' ? Number(selectedCode.slice(1)) : null;
   const isPhone = useIsPhone();
@@ -47,6 +48,7 @@ export default function PlanSection({
           electives={electives}
           electiveActions={electiveActions}
           focus={focus}
+          filter={mobileFilter}
         />
       ) : (
         <div className="plan-layout">

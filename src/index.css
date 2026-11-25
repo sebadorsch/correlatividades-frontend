@@ -740,6 +740,71 @@ a { color: var(--accent-text); }
 .mrow-detail .panel-label { margin-top: 0; }
 .mrow-detail .choice { background: var(--surface); box-shadow: 0 0 0 1px var(--edge); }
 
+/* Celular: filtros rápidos arriba del plan */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.stat-strip button {
+  display: grid;
+  gap: 2px;
+  justify-items: start;
+  padding: 12px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--edge);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+}
+
+.stat-strip b { font-size: 24px; font-weight: 500; line-height: 1.1; }
+.stat-strip span { font-size: 12px; color: var(--muted); }
+.stat-strip button[aria-pressed="true"] { background: var(--accent-tint); box-shadow: inset 0 0 0 1.5px var(--accent-edge); }
+.stat-strip button[aria-pressed="true"] span { color: var(--accent-text); }
+
+.mrow.is-dim { opacity: 0.35; }
+
+/* Celular: pestañas abajo */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px 16px calc(4px + env(safe-area-inset-bottom, 0px));
+  background: var(--surface);
+  box-shadow: 0 -1px 0 var(--edge);
+}
+
+.tabbar button {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--faint);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color var(--fast) var(--ease);
+}
+
+.tabbar button[aria-current="page"] { color: var(--accent); }
+.tabbar-space { height: 8px; }
+
+/* Con pestañas, la barra de guardado y el pie se corren arriba de ellas. */
+body:has(.tabbar) .savebar { bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
+body:has(.tabbar) .site-footer-inner { padding-bottom: calc(96px + 60px); }
+body:has(.tabbar) .mplan-nav { top: 0; }
+
 /* Barra de guardado */
 .savebar {
   position: fixed;

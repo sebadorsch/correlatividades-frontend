@@ -10,11 +10,17 @@ import { useAuth } from 'src/contexts/GeneralContext.js';
 import ElectivesPanel from 'src/components/ElectivesPanel/ElectivesPanel.jsx';
 import MobilePlan from 'src/components/MobilePlan/MobilePlan.jsx';
 import useIsPhone from 'src/hooks/useIsPhone.js';
+import Icon from 'src/components/Icons/Icon.jsx';
 import {
   analistaProgress, degreeSubjects, formatTermType, ingenieriaProgress, orderLabel,
 } from 'src/services/planStatus.ts';
 
 const LEVELS = [1, 2, 3, 4, 5];
+
+const TAB_KEY = 'correlatividades.tab';
+const readTab = () => {
+  try { return localStorage.getItem(TAB_KEY) === 'avance' ? 'avance' : 'plan'; } catch { return 'plan'; }
+};
 
 // El plan no llegó desde la API: decirlo y ofrecer reintentar, en vez de un mapa vacío.
 function PlanUnavailable() {
@@ -98,6 +104,9 @@ export default function Home() {
   } = useSubjectDraft();
   const [selectedCode, setSelectedCode] = useState(null);
   const [focus, setFocus] = useState(null);
+  const isPhone = useIsPhone();
+  const [tab, setTabState] = useState(readTab);
+  const [mobileFilter, setMobileFilter] = useState(null);
 
   if (sorted.length === 0) return <PlanUnavailable />;
   if (!user) return <Welcome sorted={sorted} byCode={byCode} />;
@@ -124,20 +133,36 @@ export default function Home() {
   ];
   const hours = available.reduce((sum, s) => sum + (s.weeklyHours || 0), 0);
 
-  // Llevar una materia del resumen al plan de abajo.
+  // Celular: pestañas Plan / Mi avance. Se recuerda la última en este dispositivo.
+  const setTab = (next) => {
+    setTabState(next);
+    try { localStorage.setItem(TAB_KEY, next); } catch { /* sin almacenamiento, no pasa nada */ }
+  };
+
+  const goToTab = (next) => {
+    if (next === tab) return;
+    setFocus(null);
+    setTab(next);
+    window.scrollTo(0, 0);
+  };
+
+  // Llevar una materia del resumen al plan.
   const openInPlan = (code) => {
     setSelectedCode(code);
     setFocus({ code, at: Date.now() });
-    // En el celular la checklist lleva a la materia; en escritorio basta con mostrar el mapa.
-    if (!window.matchMedia('(max-width: 760px)').matches) {
+    if (isPhone) {
+      // El plan del celular despliega la materia y la lleva a la vista.
+      setMobileFilter(null);
+      setTab('plan');
+    } else {
       document.getElementById('mi-plan')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
   const firstAvailable = available[0]?.code ?? sorted[0]?.code;
 
-  return (
-    <PageContainer>
+  const summary = (
+    <>
       <section className="hello">
         <h1>Tu carrera</h1>
         <p className="lede">
@@ -236,21 +261,77 @@ export default function Home() {
           </section>
         </div>
       </div>
+    </>
+  );
 
-      <PlanSection
-        sorted={sorted}
-        byCode={byCode}
-        draft={draft}
-        statusByCode={statusByCode}
-        setSubjectState={setSubjectState}
-        electives={electives}
-        electiveActions={{ list: electiveList, add: addElective, update: updateElective, remove: removeElective }}
-        selectedCode={selectedCode ?? firstAvailable}
-        onSelect={setSelectedCode}
-        focus={focus}
-      />
+  const planSection = (
+    <PlanSection
+      sorted={sorted}
+      byCode={byCode}
+      draft={draft}
+      statusByCode={statusByCode}
+      setSubjectState={setSubjectState}
+      electives={electives}
+      electiveActions={{ list: electiveList, add: addElective, update: updateElective, remove: removeElective }}
+      selectedCode={selectedCode ?? firstAvailable}
+      onSelect={setSelectedCode}
+      focus={focus}
+      mobileFilter={mobileFilter}
+    />
+  );
 
-      <SaveBar changes={changes} saveState={saveState} onSave={save} onDiscard={discard} />
+  const saveBar = <SaveBar changes={changes} saveState={saveState} onSave={save} onDiscard={discard} />;
+
+  if (!isPhone) {
+    return (
+      <PageContainer>
+        {summary}
+        {planSection}
+        {saveBar}
+      </PageContainer>
+    );
+  }
+
+  // Filtros rápidos del plan en el celular; tocar de nuevo el activo los saca.
+  const stats = [
+    { key: 'disponible', value: available.length, label: 'podés cursar' },
+    { key: 'regular', value: pendingFinals.length, label: pendingFinals.length === 1 ? 'final' : 'finales' },
+    { key: 'aprobada', value: `${approvedCount}/${degree.length}`, label: 'aprobadas' },
+  ];
+
+  return (
+    <PageContainer>
+      {tab === 'plan' ? (
+        <>
+          <div className="stat-strip" role="group" aria-label="Resaltar en el plan">
+            {stats.map(({ key, value, label }) => (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={mobileFilter === key}
+                onClick={() => setMobileFilter((prev) => (prev === key ? null : key))}
+              >
+                <b className="num">{value}</b>
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+          {planSection}
+        </>
+      ) : summary}
+
+      <div className="tabbar-space" aria-hidden="true" />
+      <nav className="tabbar" aria-label="Secciones">
+        <button type="button" aria-current={tab === 'plan' ? 'page' : undefined} onClick={() => goToTab('plan')}>
+          <Icon name="grid" size={20} />
+          Plan
+        </button>
+        <button type="button" aria-current={tab === 'avance' ? 'page' : undefined} onClick={() => goToTab('avance')}>
+          <Icon name="chart" size={20} />
+          Mi avance
+        </button>
+      </nav>
+      {saveBar}
     </PageContainer>
   );
 }

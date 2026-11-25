@@ -27,7 +27,7 @@ function ReqSummary({ subject, byCode }) {
 // correlativas a la vista. Tocar una fila la despliega ahí mismo (y, con sesión, permite marcarla).
 // Sin statusByCode se muestra neutro (sin sesión).
 export default function MobilePlan({
-  sorted, byCode, statusByCode, draft, onChange, electives, electiveActions, focus, initialOpen = null,
+  sorted, byCode, statusByCode, draft, onChange, electives, electiveActions, focus, initialOpen = null, filter = null,
 }) {
   const [open, setOpen] = useState(initialOpen);
 
@@ -84,7 +84,11 @@ export default function MobilePlan({
                 const state = status?.state ?? 'neutral';
                 const isOpen = open === s.code;
                 return (
-                  <li key={s.code} id={`materia-${s.code}`} className={`mrow st-${state} ${isOpen ? 'is-open' : ''}`}>
+                  <li
+                    key={s.code}
+                    id={`materia-${s.code}`}
+                    className={`mrow st-${state} ${isOpen ? 'is-open' : ''} ${filter && state !== filter ? 'is-dim' : ''}`}
+                  >
                     <button
                       type="button"
                       className="mrow-head"
@@ -123,7 +127,7 @@ export default function MobilePlan({
               })}
 
               {electiveRequired && (
-                <li className={`mrow mrow-electives ${open === electiveKey ? 'is-open' : ''}`}>
+                <li className={`mrow mrow-electives ${open === electiveKey ? 'is-open' : ''} ${filter ? 'is-dim' : ''}`}>
                   <button
                     type="button"
                     className="mrow-head"
